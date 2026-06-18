@@ -13,6 +13,8 @@
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* keep the header clear of the notch / status bar */
+  padding-top: env(safe-area-inset-top, 0px);
   /* room above the bottom nav */
   padding-bottom: 8px;
 }
