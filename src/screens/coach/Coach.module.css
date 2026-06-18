@@ -1,0 +1,283 @@
+.screen {
+  width: 100%;
+  max-width: var(--app-max);
+  min-height: 100dvh;
+  background: var(--bg);
+  padding: 8px 24px calc(40px + env(safe-area-inset-bottom, 0px));
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+}
+
+/* ---------- Coach home ---------- */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.hello {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 28px;
+  color: var(--text);
+}
+
+.logout {
+  background: none;
+  border: 1px solid var(--border-3);
+  border-radius: var(--r-pill);
+  color: var(--text-2);
+  font-size: 13px;
+  padding: 8px 14px;
+}
+
+.codeCard {
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin-bottom: 26px;
+}
+
+.codeLabel {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.code {
+  font-family: var(--serif);
+  font-size: 30px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin: 6px 0 4px;
+}
+
+.codeHint {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sectionTitle {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text);
+}
+
+.count {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.muted {
+  color: var(--text-2);
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--border-3);
+  border-radius: var(--r-card);
+  padding: 22px;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.athleteCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 16px 18px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  color: var(--gold);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.meta {
+  color: var(--text-2);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.bars {
+  margin-top: 6px;
+}
+
+.bar {
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.score {
+  font-family: var(--serif);
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+/* ---------- Athlete detail ---------- */
+.detailHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.back {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.detailName {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 26px;
+  color: var(--text);
+}
+
+.detailMeta {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.statRow {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.statBig {
+  font-family: var(--serif);
+  font-size: 34px;
+  color: var(--text);
+}
+
+.statValue {
+  font-family: var(--serif);
+  font-size: 24px;
+  color: var(--text);
+}
+
+.statLabel {
+  color: var(--text-2);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trendRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trendLabel {
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.trendValue {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.trendDelta {
+  font-size: 13px;
+}
+
+.mealRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+}
+
+.mealName {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.mealTime {
+  color: var(--text-2);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.mealScore {
+  font-family: var(--serif);
+  font-size: 22px;
+}

@@ -2,9 +2,13 @@ import express from 'express'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { analyzeFood, analyzeMenu, coachReply, weekendStrategy } from './minimax.js'
+import { initDb } from './db.js'
+import { registerRoutes } from './routes.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PORT = process.env.PORT || 8787
+
+initDb()
 
 const app = express()
 // Photos arrive as base64 data URLs → allow a generous JSON body.
@@ -23,6 +27,9 @@ const handler = (fn) => async (req, res) => {
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, ai: process.env.MINIMAX_API_KEY ? 'minimax' : 'unconfigured' })
 })
+
+// Auth / athlete data / coach / messaging
+registerRoutes(app)
 
 app.post('/api/ai/food', handler(analyzeFood))
 app.post('/api/ai/menu', handler(analyzeMenu))

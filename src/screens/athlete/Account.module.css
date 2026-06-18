@@ -1,0 +1,100 @@
+.screen {
+  padding: 8px 24px 40px;
+}
+
+.title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 28px;
+  color: var(--text);
+  margin: 8px 0 24px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.value {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.sectionTitle {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.linkedCard {
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--r-card-lg);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.linkedText {
+  color: var(--text);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.hint {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.input {
+  background: var(--bg);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  letter-spacing: 1px;
+}
+
+.input::placeholder {
+  color: var(--text-3);
+  letter-spacing: normal;
+}
+
+.input:focus {
+  border-color: var(--gold-soft);
+}
+
+.error {
+  color: #d9836b;
+  font-size: 13px;
+}
+
+.logout {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border-3);
+  border-radius: var(--r-btn);
+  color: var(--text-2);
+  font-size: 14px;
+  padding: 15px;
+}

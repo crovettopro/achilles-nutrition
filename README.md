@@ -37,6 +37,22 @@ El servidor [`server/`](server/) guarda la API key (`MINIMAX_API_KEY`, **sin** p
 
 En dev, Vite proxea `/api` → `localhost:8787`. En prod, el mismo server sirve la SPA y la API (mismo origen, sin CORS). El frontend usa `BackendAIService` y nunca ve la key.
 
+## Usuarios, roles y mensajería
+
+Hay dos roles con login (JWT): **Deportista** y **Preparador**.
+
+- **Deportista**: su perfil/comidas/check-ins se guardan en el servidor (no en el navegador). Desde *Tu cuenta* (avatar del Home) se vincula a un preparador con su código y chatea con él.
+- **Preparador**: ve la lista de sus alumnos (Achilles Score, adherencia, última actividad), entra al detalle de cada uno (comidas, tendencia) y les escribe.
+- **Vínculo**: cada preparador tiene un código (`ACH-XXXX`); el alumno lo introduce al registrarse o en *Tu cuenta*.
+
+Usuarios de demo sembrados al arrancar (`server/db.js`):
+| Email | Pass | Rol |
+|-------|------|-----|
+| crovettopro@gmail.com | aquilles123 | Deportista |
+| alejandrodiosfdz@gmail.com | aquilles123 | Preparador |
+
+> ⚠️ **Persistencia:** el backend de usuarios usa un store en archivo (`server/data/db.json`), válido en local y en hosts persistentes (Render/Railway/Fly), **no en Vercel serverless** (disco efímero). En Vercel solo funcionan las funciones de IA (`api/`); el login/coach corre en el server Express. Para multiusuario en producción habrá que mover este store a un Postgres hosteado (Neon/Supabase) — cambio acotado en `server/db.js`.
+
 ## Deploy en Vercel
 
 El repo está listo para Vercel:

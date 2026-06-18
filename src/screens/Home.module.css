@@ -28,6 +28,7 @@
   height: 38px;
   border-radius: 50%;
   border: 1px solid var(--border-2);
+  background: none;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -28,7 +28,9 @@ export default function Home() {
           <div className={styles.brand}>ACHILLES</div>
           <div className={styles.date}>{formatToday()}</div>
         </div>
-        <div className={styles.avatar}>A</div>
+        <button className={styles.avatar} onClick={() => navigate('/account')} aria-label="Tu cuenta">
+          A
+        </button>
       </header>
 
       {/* Score ring + status pill */}

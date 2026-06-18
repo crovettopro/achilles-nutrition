@@ -4,12 +4,34 @@ export type Goal = 'fat' | 'muscle'
 export type Activity = 'low' | 'mid' | 'high'
 export type WeekendPlan = 'lunch' | 'dinner'
 
+export type Role = 'athlete' | 'coach'
+
+export interface AuthUser {
+  id: string
+  email: string
+  name: string
+  role: Role
+  coachCode?: string
+  coachId?: string | null
+}
+
+/** A human-to-human message (coach ↔ athlete). */
+export interface Message {
+  id: string
+  fromId: string
+  toId: string
+  text: string
+  createdAt: string
+}
+
 export interface Profile {
   goal: Goal
   age: number
   weight: number
   height: number
   activity: Activity
+  /** Whether the athlete finished onboarding (server-tracked). */
+  onboarded?: boolean
 }
 
 export interface Macros {
