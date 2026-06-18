@@ -14,11 +14,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = join(__dirname, 'data')
 const DB_FILE = join(DATA_DIR, 'db.json')
 
+// On Vercel the filesystem is read-only/ephemeral → keep the store in memory
+// (seeded with the fixed demo data). Writes live only for the instance lifetime.
+const IN_MEMORY = !!process.env.VERCEL
+
 const empty = () => ({ users: [], profiles: {}, meals: {}, checkins: {}, messages: [] })
 
 let db = empty()
 
 function persist() {
+  if (IN_MEMORY) return
   if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true })
   writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
 }
@@ -27,47 +32,83 @@ function shortCode() {
   return 'ACH-' + randomUUID().slice(0, 4).toUpperCase()
 }
 
-/** Load existing DB or seed a fresh one with the two demo accounts. */
+// Fixed demo accounts — always present with stable ids, password and code.
+const DEMO_COACH = {
+  id: 'coach-alejandro',
+  email: 'alejandrodiosfdz@gmail.com',
+  name: 'Alejandro',
+  coachCode: 'ACH-ALEX',
+}
+const DEMO_ATHLETE = {
+  id: 'athlete-crovetto',
+  email: 'crovettopro@gmail.com',
+  name: 'Crovetto',
+}
+
+/** Load existing DB (or start empty), then guarantee the demo accounts exist. */
 export function initDb() {
-  if (existsSync(DB_FILE)) {
+  if (!IN_MEMORY && existsSync(DB_FILE)) {
     try {
       db = JSON.parse(readFileSync(DB_FILE, 'utf8'))
-      return
     } catch {
       db = empty()
     }
+  } else {
+    db = empty()
+  }
+  ensureDemoUsers()
+}
+
+/** Idempotently create/repair the two fixed demo accounts. */
+function ensureDemoUsers() {
+  const hash = bcrypt.hashSync('aquilles123', 10)
+
+  let coach = db.users.find((u) => u.id === DEMO_COACH.id)
+  if (!coach) {
+    coach = {
+      id: DEMO_COACH.id,
+      email: DEMO_COACH.email,
+      passwordHash: hash,
+      role: 'coach',
+      name: DEMO_COACH.name,
+      coachCode: DEMO_COACH.coachCode,
+      createdAt: new Date().toISOString(),
+    }
+    db.users.push(coach)
+  } else {
+    coach.coachCode = DEMO_COACH.coachCode // keep code stable
   }
 
-  const hash = (p) => bcrypt.hashSync(p, 10)
-  const coachId = randomUUID()
-  const athleteId = randomUUID()
-  const coachCode = shortCode()
+  let athlete = db.users.find((u) => u.id === DEMO_ATHLETE.id)
+  if (!athlete) {
+    athlete = {
+      id: DEMO_ATHLETE.id,
+      email: DEMO_ATHLETE.email,
+      passwordHash: hash,
+      role: 'athlete',
+      name: DEMO_ATHLETE.name,
+      coachId: DEMO_COACH.id, // pre-linked
+      createdAt: new Date().toISOString(),
+    }
+    db.users.push(athlete)
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 10)
+    db.profiles[athlete.id] = { goal: 'fat', age: 32, weight: 82, height: 180, activity: 'mid', onboarded: true }
+    db.meals[athlete.id] = [
+      { id: randomUUID(), name: 'Tortilla de claras y café', time: '08:20', date: today, score: 84, macros: { protein: 30, carbs: 8, fat: 12, kcal: 280 } },
+      { id: randomUUID(), name: 'Pollo a la plancha, arroz y aguacate', time: '13:40', date: today, score: 92, macros: { protein: 48, carbs: 62, fat: 18, kcal: 610 } },
+      { id: randomUUID(), name: 'Salmón con espárragos', time: '20:15', date: today, score: 95, macros: { protein: 40, carbs: 10, fat: 22, kcal: 420 } },
+    ]
+    db.checkins[athlete.id] = [
+      { id: randomUUID(), date: today, weightKg: 81.4, waistCm: 84, steps: 11400 },
+    ]
+  } else {
+    athlete.coachId = DEMO_COACH.id // keep the link stable
+  }
 
-  db = empty()
-  db.users.push({
-    id: coachId,
-    email: 'alejandrodiosfdz@gmail.com',
-    passwordHash: hash('aquilles123'),
-    role: 'coach',
-    name: 'Alejandro',
-    coachCode,
-    createdAt: new Date().toISOString(),
-  })
-  db.users.push({
-    id: athleteId,
-    email: 'crovettopro@gmail.com',
-    passwordHash: hash('aquilles123'),
-    role: 'athlete',
-    name: 'Crovetto',
-    coachId, // pre-linked to the demo coach so the dashboard isn't empty
-    createdAt: new Date().toISOString(),
-  })
-  // Sensible starting profile for the athlete (already onboarded for the demo).
-  db.profiles[athleteId] = { goal: 'fat', age: 32, weight: 82, height: 180, activity: 'mid', onboarded: true }
-  db.meals[athleteId] = []
-  db.checkins[athleteId] = []
   persist()
-  console.log(`Seeded users. Coach invite code: ${coachCode}`)
+  console.log(`Demo accounts ready. Coach invite code: ${DEMO_COACH.coachCode}`)
 }
 
 /* ---------- Users ---------- */
