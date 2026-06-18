@@ -1,0 +1,37 @@
+.btn {
+  border: none;
+  border-radius: var(--r-btn);
+  padding: 17px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: opacity 0.15s ease, transform 0.05s ease;
+}
+
+.btn:active {
+  transform: scale(0.99);
+}
+
+.block {
+  width: 100%;
+}
+
+.primary {
+  background: var(--gold);
+  color: #0a0a0a;
+}
+
+.primary:hover {
+  opacity: 0.92;
+}
+
+.ghost {
+  background: transparent;
+  border: 1px solid var(--border-3);
+  color: var(--text);
+}
+
+.ghost:hover {
+  background: rgba(255, 255, 255, 0.03);
+}

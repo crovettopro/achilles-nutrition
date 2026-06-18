@@ -1,0 +1,67 @@
+.viewer {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--r-viewer);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-image: repeating-linear-gradient(45deg, #111 0 14px, #0d0d0d 14px 28px);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.video[data-active='true'] {
+  display: block;
+}
+
+.frame {
+  position: absolute;
+  inset: 24px;
+  border: 1px solid var(--gold-line);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.caption {
+  font-family: var(--mono);
+  color: var(--text-3);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.error {
+  color: #d9836b;
+  font-size: 13px;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.alt {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+  min-height: 18px;
+}
+
+.altLink {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.altMuted {
+  color: var(--text-3);
+  font-size: 13px;
+}

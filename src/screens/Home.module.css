@@ -1,0 +1,210 @@
+.screen {
+  padding: 8px 24px 40px;
+}
+
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+}
+
+.date {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+/* ---------- Score ---------- */
+.scoreSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0 14px;
+}
+
+.pill {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--gold-pill);
+  border-radius: var(--r-pill);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.goal {
+  text-align: center;
+  color: var(--text-2);
+  font-size: 13px;
+  margin: 18px 0 24px;
+}
+
+.goal span {
+  color: var(--text);
+}
+
+/* ---------- Metrics ---------- */
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 18px 12px;
+  text-align: center;
+}
+
+.metricValue {
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--text);
+}
+
+.metricLabel {
+  color: var(--text-2);
+  font-size: 11px;
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Quick actions ---------- */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.actionCard {
+  text-align: left;
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--r-card);
+  padding: 18px;
+}
+
+.actionTitle {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.actionSub {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+/* ---------- Meals ---------- */
+.mealsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.mealsTitle {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text);
+}
+
+.mealsCount {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.mealsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emptyMeals {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px dashed var(--border-3);
+  border-radius: var(--r-card);
+  padding: 20px 18px;
+}
+
+.emptyTitle {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.emptySub {
+  color: var(--gold);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.mealCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mealInfo {
+  flex: 1;
+  min-width: 0;
+  padding-right: 14px;
+}
+
+.mealName {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.mealTime {
+  color: var(--text-2);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.mealScore {
+  font-family: var(--serif);
+  font-size: 22px;
+}

@@ -1,0 +1,8 @@
+.back {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 18px;
+}

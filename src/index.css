@@ -1,0 +1,120 @@
+/* ============================================================
+   Achilles Nutrition — global styles & design tokens
+   All exact values come from the design handoff.
+   ============================================================ */
+
+:root {
+  /* Surfaces */
+  --bg: #0a0a0a; /* main app background */
+  --bg-page: #050505; /* page / outer frame */
+  --surface: #141414; /* card surface */
+  --surface-gradient: linear-gradient(160deg, #1a1713, #121212); /* highlighted card */
+
+  /* Text */
+  --text: #f5f5f5; /* primary, off-white */
+  --text-2: #a0a0a0; /* secondary, stone grey */
+  --text-3: #777; /* tertiary / placeholders */
+  --text-4: #666; /* inactive nav */
+
+  /* Accent */
+  --gold: #b89b5e;
+  --gold-soft: rgba(184, 155, 94, 0.18);
+  --gold-soft-2: rgba(184, 155, 94, 0.25);
+  --gold-line: rgba(184, 155, 94, 0.4);
+  --gold-pill: rgba(184, 155, 94, 0.3);
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-2: rgba(255, 255, 255, 0.1);
+  --border-3: rgba(255, 255, 255, 0.15);
+
+  /* Radii */
+  --r-btn: 14px;
+  --r-card: 16px;
+  --r-card-lg: 18px;
+  --r-viewer: 24px;
+  --r-pill: 100px;
+
+  /* Fonts */
+  --serif: 'Inria Serif', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Layout */
+  --app-max: 430px;
+  --nav-h: 78px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
+
+/* Remove tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Animations ---------- */
+@keyframes achFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes achSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes achPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ach-fade {
+  animation: achFade 0.5s ease both;
+}

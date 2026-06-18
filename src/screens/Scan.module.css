@@ -1,0 +1,164 @@
+.screen {
+  padding: 8px 24px 40px;
+}
+
+.title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 28px;
+  color: var(--text);
+  margin: 8px 0 6px;
+}
+
+.subtitle {
+  color: var(--text-2);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* ---------- describe input ---------- */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.or {
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  padding: 15px 18px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--text-3);
+}
+
+.input:focus {
+  border-color: var(--gold-soft);
+}
+
+/* ---------- result ---------- */
+.resultPhoto {
+  aspect-ratio: 16 / 10;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-image: repeating-linear-gradient(45deg, #14110c 0 14px, #0f0d09 14px 28px);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+}
+
+.errorBanner {
+  color: #d9836b;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.resultPhotoCaption {
+  font-family: var(--mono);
+  color: #8a7b55;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.resultHead {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.resultScore {
+  font-family: var(--serif);
+  font-size: 64px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.resultLabel {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.resultName {
+  color: var(--text);
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.factors {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.factor {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.macros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.macro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 6px;
+  text-align: center;
+}
+
+.macroValue {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.macroLabel {
+  color: var(--text-3);
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.resultActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.flex {
+  flex: 1;
+  padding: 15px;
+  font-size: 14px;
+}

@@ -1,0 +1,78 @@
+.screen {
+  padding: 8px 24px 40px;
+}
+
+.title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: var(--text-2);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.errorBanner {
+  color: #d9836b;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.best {
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft-2);
+  border-radius: 20px;
+  padding: 26px;
+}
+
+.bestEyebrow {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.bestText {
+  font-family: var(--serif);
+  font-size: 24px;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.avoid {
+  margin-top: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 22px;
+}
+
+.avoidEyebrow {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.avoidList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.avoidItem {
+  display: flex;
+  gap: 12px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.cross {
+  color: var(--text-2);
+}

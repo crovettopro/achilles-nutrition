@@ -1,0 +1,8 @@
+/* Outer page: subtle radial glow behind the app, centered mobile column. */
+.app {
+  min-height: 100dvh;
+  width: 100%;
+  background: radial-gradient(120% 80% at 50% -10%, #161310 0%, #050505 55%);
+  display: flex;
+  justify-content: center;
+}

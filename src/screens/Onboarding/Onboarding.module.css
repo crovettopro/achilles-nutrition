@@ -1,0 +1,174 @@
+.screen {
+  width: 100%;
+  max-width: var(--app-max);
+  height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 28px 40px;
+}
+
+/* ---------- Welcome ---------- */
+.welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.monogram {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.wordmark {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 46px;
+  line-height: 1.05;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.divider {
+  width: 34px;
+  height: 1px;
+  background: rgba(184, 155, 94, 0.6);
+  margin: 26px 0;
+}
+
+.tagline {
+  color: var(--text-2);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 270px;
+}
+
+.spacer {
+  flex-grow: 0;
+}
+
+/* ---------- Generic step ---------- */
+.step {
+  padding-top: 54px;
+}
+
+.eyebrow {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 30px;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 32px;
+}
+
+/* ---------- Selectable option cards (goal + activity) ---------- */
+.optionCard {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-card-lg);
+  padding: 24px;
+  margin-bottom: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.optionCard[data-selected='true'] {
+  border-color: var(--gold);
+}
+
+.optionTitle {
+  font-family: var(--serif);
+  font-size: 21px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.optionSub {
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.activityTitle {
+  font-size: 17px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.activitySub {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+/* ---------- Steppers (data step) ---------- */
+.stepperList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stepperRow {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stepperLabel {
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.stepperControls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.circleBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--text);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.stepperValue {
+  font-family: var(--serif);
+  font-size: 24px;
+  color: var(--text);
+  min-width: 42px;
+  text-align: center;
+}

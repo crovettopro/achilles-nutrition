@@ -1,0 +1,30 @@
+.wrap {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(184, 155, 94, 0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: achSpin 1s linear infinite;
+}
+
+.title {
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 20px;
+  margin-top: 28px;
+}
+
+.subtitle {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 8px;
+}
