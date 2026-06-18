@@ -37,6 +37,19 @@ El servidor [`server/`](server/) guarda la API key (`MINIMAX_API_KEY`, **sin** p
 
 En dev, Vite proxea `/api` → `localhost:8787`. En prod, el mismo server sirve la SPA y la API (mismo origen, sin CORS). El frontend usa `BackendAIService` y nunca ve la key.
 
+## Deploy en Vercel
+
+El repo está listo para Vercel:
+- Frontend (Vite) → build estático en `dist/`.
+- Backend → **funciones serverless** en [`api/`](api/) (reutilizan `server/minimax.js`). Vercel mapea `api/ai/food.js` → `/api/ai/food`, etc.
+- [`vercel.json`](vercel.json) define el build y el fallback SPA.
+
+Pasos:
+1. En [vercel.com](https://vercel.com) → *Add New Project* → importa `crovettopro/achilles-nutrition`.
+2. Framework: **Vite** (autodetectado). No cambies build/output (ya en `vercel.json`).
+3. **Environment Variables** → añade `MINIMAX_API_KEY` (y opcionalmente `MINIMAX_MODEL`, `MINIMAX_VISION_MODEL`). La key va aquí, **nunca** en el repo.
+4. Deploy. El `npm run dev`/`npm start` local con Express sigue funcionando igual.
+
 ## IA (proveedores)
 
 `VITE_AI_PROVIDER` selecciona el proveedor del frontend (`src/services/ai/index.ts`):
