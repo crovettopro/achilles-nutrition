@@ -1,16 +1,9 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import Button from '../components/ui/Button'
-import Sparkline from '../components/Sparkline'
+import EvolutionCard from '../components/EvolutionCard'
 import { fileToDataUrl } from '../lib/image'
-import {
-  bodyTrend,
-  motivationalLine,
-  progressEvolution,
-  shortDate,
-  trendText,
-  type EvolutionMetric,
-} from '../lib/metrics'
+import { bodyTrend, progressEvolution, shortDate, trendText } from '../lib/metrics'
 import styles from './Progress.module.css'
 
 export default function Progress() {
@@ -30,10 +23,7 @@ export default function Progress() {
       <h2 className={styles.title}>Seguimiento semanal</h2>
       <p className={styles.subtitle}>Una vez por semana. Nada más.</p>
 
-      {evo.weight && (
-        <Evolution metric={evo.weight} waist={evo.waist} weeks={evo.weeks} count={evo.count}
-          goalDown={profile.goal === 'fat'} phrase={motivationalLine(evo, profile.goal)} num={num} />
-      )}
+      <EvolutionCard evo={evo} goal={profile.goal} />
 
       <div className={styles.trend}>
         <div className={styles.trendEyebrow}>Tendencia</div>
@@ -81,78 +71,6 @@ export default function Progress() {
         />
       )}
     </div>
-  )
-}
-
-/* -------------------- Evolution card (fine chart) -------------------- */
-function Evolution({
-  metric,
-  waist,
-  weeks,
-  count,
-  goalDown,
-  phrase,
-  num,
-}: {
-  metric: EvolutionMetric
-  waist?: EvolutionMetric
-  weeks: number
-  count: number
-  /** True when going DOWN is good (fat loss). */
-  goalDown: boolean
-  phrase: string
-  num: (n: number) => string
-}) {
-  // For a fat-loss goal a drop is good (gold); for muscle a rise is good.
-  const good = goalDown ? metric.pctChange < 0 : metric.pctChange > 0
-  const arrow = metric.pctChange < 0 ? '↓' : metric.pctChange > 0 ? '↑' : '·'
-  const pctText = `${arrow} ${Math.abs(metric.pctChange)}%`
-
-  const fmtAbs = (v: number, unit: string) =>
-    `${v > 0 ? '+' : v < 0 ? '−' : ''}${num(Math.abs(v))} ${unit}`
-
-  return (
-    <section className={styles.evo}>
-      <div className={styles.evoHead}>
-        <span className={styles.evoEyebrow}>Evolución · Peso</span>
-        <span className={styles.evoRange}>
-          {shortDate(metric.firstDate)} → {shortDate(metric.lastDate)}
-        </span>
-      </div>
-
-      <div className={styles.evoMain}>
-        <div className={styles.evoValue}>
-          {num(metric.last)}
-          <span className={styles.evoUnit}>kg</span>
-        </div>
-        <div className={`${styles.evoChange} ${good ? styles.good : styles.bad}`}>{pctText}</div>
-      </div>
-
-      <Sparkline values={metric.series.map((p) => p.value)} />
-
-      <div className={styles.evoMeta}>
-        {count} mediciones · {fmtAbs(metric.absChange, 'kg')} en {weeks} {weeks === 1 ? 'semana' : 'semanas'}
-      </div>
-
-      {waist && (
-        <div className={styles.evoWaist}>
-          <div className={styles.evoWaistInfo}>
-            <span className={styles.evoWaistLabel}>Cintura</span>
-            <span className={styles.evoWaistValue}>{num(waist.last)} cm</span>
-          </div>
-          <div className={styles.evoWaistSpark}>
-            <Sparkline values={waist.series.map((p) => p.value)} height={34} color="var(--text-2)" />
-          </div>
-          <span
-            className={`${styles.evoWaistChange} ${(goalDown ? waist.pctChange < 0 : waist.pctChange > 0) ? styles.good : styles.bad}`}
-          >
-            {waist.pctChange < 0 ? '↓' : waist.pctChange > 0 ? '↑' : '·'} {Math.abs(waist.pctChange)}%
-          </span>
-        </div>
-      )}
-
-      <div className={styles.evoPhrase}>{phrase}</div>
-    </section>
   )
 }
 

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../lib/api'
-import { bodyTrend, dailyScore, mealsOn, todayISO, weeklyAdherence } from '../../lib/metrics'
+import { bodyTrend, dailyScore, mealsOn, progressEvolution, todayISO, weeklyAdherence } from '../../lib/metrics'
 import { goalLabel } from '../../lib/score'
 import Button from '../../components/ui/Button'
+import EvolutionCard from '../../components/EvolutionCard'
 import type { AuthUser, Checkin, Meal, Profile } from '../../types'
 import styles from './Coach.module.css'
 
@@ -35,6 +36,7 @@ export default function CoachAthlete() {
   const adherence = weeklyAdherence(meals)
   const todays = mealsOn(meals, todayISO())
   const trend = bodyTrend(checkins, profile?.goal ?? 'fat')
+  const evo = progressEvolution(checkins)
 
   return (
     <div className={`${styles.screen} ach-fade`}>
@@ -59,6 +61,8 @@ export default function CoachAthlete() {
       <Button onClick={() => navigate(`/coach/chat/${athlete.id}`)} style={{ margin: '4px 0 22px' }}>
         Enviar mensaje
       </Button>
+
+      <EvolutionCard evo={evo} goal={profile?.goal ?? 'fat'} />
 
       <div className={styles.sectionHead}>
         <span className={styles.sectionTitle}>Tendencia</span>
