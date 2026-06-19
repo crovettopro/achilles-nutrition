@@ -9,13 +9,13 @@ export function signToken(user) {
 }
 
 /** Express middleware: require a valid Bearer token, attach req.user. */
-export function requireAuth(req, res, next) {
+export async function requireAuth(req, res, next) {
   const header = req.headers.authorization || ''
   const token = header.startsWith('Bearer ') ? header.slice(7) : null
   if (!token) return res.status(401).json({ error: 'no_token' })
   try {
     const payload = jwt.verify(token, SECRET)
-    const user = findUserById(payload.sub)
+    const user = await findUserById(payload.sub)
     if (!user) return res.status(401).json({ error: 'invalid_user' })
     req.user = user
     next()

@@ -1,35 +1,32 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcryptjs'
+import { supabase, hasSupabase } from './supabase.js'
 
 /**
- * Tiny file-backed store. Works locally and on persistent Node hosts.
- * NOTE: not suitable for Vercel serverless (ephemeral FS) — swap this module
- * for a real Postgres client when moving the user system to production.
+ * Supabase Postgres-backed store. Durable on Vercel (unlike the old file/
+ * in-memory store). All access goes through the SERVICE_ROLE client in
+ * server/supabase.js. Every function is async.
+ *
+ * Run server/schema.sql once in the Supabase SQL editor before first use.
  */
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DATA_DIR = join(__dirname, 'data')
-const DB_FILE = join(DATA_DIR, 'db.json')
-
-// On Vercel the filesystem is read-only/ephemeral → keep the store in memory
-// (seeded with the fixed demo data). Writes live only for the instance lifetime.
-const IN_MEMORY = !!process.env.VERCEL
-
-const empty = () => ({ users: [], profiles: {}, meals: {}, checkins: {}, messages: [] })
-
-let db = empty()
-
-function persist() {
-  if (IN_MEMORY) return
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true })
-  writeFileSync(DB_FILE, JSON.stringify(db, null, 2))
-}
 
 function shortCode() {
   return 'ACH-' + randomUUID().slice(0, 4).toUpperCase()
+}
+
+/** DB row (snake_case) → app user shape (camelCase) used across the server. */
+function rowToUser(r) {
+  if (!r) return null
+  return {
+    id: r.id,
+    email: r.email,
+    passwordHash: r.password_hash,
+    role: r.role,
+    name: r.name,
+    coachCode: r.coach_code ?? undefined,
+    coachId: r.coach_id ?? undefined,
+    createdAt: r.created_at,
+  }
 }
 
 // Fixed demo accounts — always present with stable ids, password and code.
@@ -45,145 +42,224 @@ const DEMO_ATHLETE = {
   name: 'Crovetto',
 }
 
-/** Load existing DB (or start empty), then guarantee the demo accounts exist. */
-export function initDb() {
-  if (!IN_MEMORY && existsSync(DB_FILE)) {
-    try {
-      db = JSON.parse(readFileSync(DB_FILE, 'utf8'))
-    } catch {
-      db = empty()
-    }
-  } else {
-    db = empty()
+/** Verify Supabase config, then guarantee the demo accounts exist. */
+export async function initDb() {
+  if (!hasSupabase) {
+    throw new Error(
+      'Supabase no configurado: define SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY en el entorno.',
+    )
   }
-  ensureDemoUsers()
+  await ensureDemoUsers()
 }
 
-/** Idempotently create/repair the two fixed demo accounts. */
-function ensureDemoUsers() {
+function todayLocalISO() {
+  return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10)
+}
+
+/** Idempotently create/repair the two fixed demo accounts and their data. */
+async function ensureDemoUsers() {
   const hash = bcrypt.hashSync('aquilles123', 10)
 
-  let coach = db.users.find((u) => u.id === DEMO_COACH.id)
-  if (!coach) {
-    coach = {
+  // Coach: upsert keeps the id, email, code and password stable.
+  await supabase.from('users').upsert(
+    {
       id: DEMO_COACH.id,
       email: DEMO_COACH.email,
-      passwordHash: hash,
+      password_hash: hash,
       role: 'coach',
       name: DEMO_COACH.name,
-      coachCode: DEMO_COACH.coachCode,
-      createdAt: new Date().toISOString(),
-    }
-    db.users.push(coach)
-  } else {
-    coach.coachCode = DEMO_COACH.coachCode // keep code stable
-  }
+      coach_code: DEMO_COACH.coachCode,
+    },
+    { onConflict: 'id' },
+  )
 
-  let athlete = db.users.find((u) => u.id === DEMO_ATHLETE.id)
-  if (!athlete) {
-    athlete = {
+  // Athlete: only seed profile/meals/checkins the FIRST time (don't clobber
+  // real data the demo user may have logged since).
+  const { data: existing } = await supabase
+    .from('users')
+    .select('id')
+    .eq('id', DEMO_ATHLETE.id)
+    .maybeSingle()
+  const firstTime = !existing
+
+  await supabase.from('users').upsert(
+    {
       id: DEMO_ATHLETE.id,
       email: DEMO_ATHLETE.email,
-      passwordHash: hash,
+      password_hash: hash,
       role: 'athlete',
       name: DEMO_ATHLETE.name,
-      coachId: DEMO_COACH.id, // pre-linked
-      createdAt: new Date().toISOString(),
-    }
-    db.users.push(athlete)
-    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .slice(0, 10)
-    db.profiles[athlete.id] = { goal: 'fat', age: 32, weight: 82, height: 180, activity: 'mid', onboarded: true }
-    db.meals[athlete.id] = [
-      { id: randomUUID(), name: 'Tortilla de claras y café', time: '08:20', date: today, score: 84, macros: { protein: 30, carbs: 8, fat: 12, kcal: 280 } },
-      { id: randomUUID(), name: 'Pollo a la plancha, arroz y aguacate', time: '13:40', date: today, score: 92, macros: { protein: 48, carbs: 62, fat: 18, kcal: 610 } },
-      { id: randomUUID(), name: 'Salmón con espárragos', time: '20:15', date: today, score: 95, macros: { protein: 40, carbs: 10, fat: 22, kcal: 420 } },
-    ]
-    db.checkins[athlete.id] = [
-      { id: randomUUID(), date: today, weightKg: 81.4, waistCm: 84, steps: 11400 },
-    ]
-  } else {
-    athlete.coachId = DEMO_COACH.id // keep the link stable
+      coach_id: DEMO_COACH.id, // pre-linked
+    },
+    { onConflict: 'id' },
+  )
+
+  if (firstTime) {
+    const today = todayLocalISO()
+    await supabase.from('profiles').upsert({
+      user_id: DEMO_ATHLETE.id,
+      goal: 'fat',
+      age: 32,
+      weight: 82,
+      height: 180,
+      activity: 'mid',
+      onboarded: true,
+    })
+    await supabase.from('meals').upsert({
+      user_id: DEMO_ATHLETE.id,
+      items: [
+        { id: randomUUID(), name: 'Tortilla de claras y café', time: '08:20', date: today, score: 84, macros: { protein: 30, carbs: 8, fat: 12, kcal: 280 } },
+        { id: randomUUID(), name: 'Pollo a la plancha, arroz y aguacate', time: '13:40', date: today, score: 92, macros: { protein: 48, carbs: 62, fat: 18, kcal: 610 } },
+        { id: randomUUID(), name: 'Salmón con espárragos', time: '20:15', date: today, score: 95, macros: { protein: 40, carbs: 10, fat: 22, kcal: 420 } },
+      ],
+    })
+    await supabase.from('checkins').upsert({
+      user_id: DEMO_ATHLETE.id,
+      items: [{ id: randomUUID(), date: today, weightKg: 81.4, waistCm: 84, steps: 11400 }],
+    })
   }
 
-  persist()
-  console.log(`Demo accounts ready. Coach invite code: ${DEMO_COACH.coachCode}`)
+  console.log(`Demo accounts ready (Supabase). Coach invite code: ${DEMO_COACH.coachCode}`)
 }
 
 /* ---------- Users ---------- */
-export const findUserByEmail = (email) =>
-  db.users.find((u) => u.email.toLowerCase() === String(email).toLowerCase())
-export const findUserById = (id) => db.users.find((u) => u.id === id)
-export const findCoachByCode = (code) =>
-  db.users.find((u) => u.role === 'coach' && u.coachCode === String(code).trim().toUpperCase())
-
-export function createUser({ email, passwordHash, role, name }) {
-  const user = {
-    id: randomUUID(),
-    email,
-    passwordHash,
-    role,
-    name,
-    createdAt: new Date().toISOString(),
-    ...(role === 'coach' ? { coachCode: shortCode() } : {}),
-  }
-  db.users.push(user)
-  if (role === 'athlete') {
-    db.profiles[user.id] = { goal: 'fat', age: 30, weight: 80, height: 178, activity: 'mid', onboarded: false }
-    db.meals[user.id] = []
-    db.checkins[user.id] = []
-  }
-  persist()
-  return user
+export async function findUserByEmail(email) {
+  const { data } = await supabase
+    .from('users')
+    .select('*')
+    .ilike('email', String(email))
+    .maybeSingle()
+  return rowToUser(data)
 }
 
-export function linkAthleteToCoach(athleteId, coachId) {
-  const a = findUserById(athleteId)
-  if (a) {
-    a.coachId = coachId
-    persist()
+export async function findUserById(id) {
+  const { data } = await supabase.from('users').select('*').eq('id', id).maybeSingle()
+  return rowToUser(data)
+}
+
+export async function findCoachByCode(code) {
+  const { data } = await supabase
+    .from('users')
+    .select('*')
+    .eq('role', 'coach')
+    .eq('coach_code', String(code).trim().toUpperCase())
+    .maybeSingle()
+  return rowToUser(data)
+}
+
+export async function createUser({ email, passwordHash, role, name }) {
+  const id = randomUUID()
+  const row = {
+    id,
+    email,
+    password_hash: passwordHash,
+    role,
+    name,
+    ...(role === 'coach' ? { coach_code: shortCode() } : {}),
   }
-  return a
+  const { data, error } = await supabase.from('users').insert(row).select('*').single()
+  if (error) throw new Error(`createUser: ${error.message}`)
+
+  if (role === 'athlete') {
+    await supabase.from('profiles').upsert({
+      user_id: id,
+      goal: 'fat',
+      age: 30,
+      weight: 80,
+      height: 178,
+      activity: 'mid',
+      onboarded: false,
+    })
+    await supabase.from('meals').upsert({ user_id: id, items: [] })
+    await supabase.from('checkins').upsert({ user_id: id, items: [] })
+  }
+  return rowToUser(data)
+}
+
+export async function linkAthleteToCoach(athleteId, coachId) {
+  const { data } = await supabase
+    .from('users')
+    .update({ coach_id: coachId })
+    .eq('id', athleteId)
+    .select('*')
+    .maybeSingle()
+  return rowToUser(data)
 }
 
 /* ---------- Athlete data ---------- */
-export const getProfile = (uid) => db.profiles[uid] ?? null
-export function setProfile(uid, profile) {
-  db.profiles[uid] = profile
-  persist()
+export async function getProfile(uid) {
+  const { data } = await supabase
+    .from('profiles')
+    .select('goal, age, weight, height, activity, onboarded')
+    .eq('user_id', uid)
+    .maybeSingle()
+  return data ?? null
 }
-export const getMeals = (uid) => db.meals[uid] ?? []
-export function setMeals(uid, meals) {
-  db.meals[uid] = meals
-  persist()
+
+export async function setProfile(uid, profile) {
+  await supabase.from('profiles').upsert({
+    user_id: uid,
+    goal: profile?.goal ?? null,
+    age: profile?.age ?? null,
+    weight: profile?.weight ?? null,
+    height: profile?.height ?? null,
+    activity: profile?.activity ?? null,
+    onboarded: profile?.onboarded ?? false,
+  })
 }
-export const getCheckins = (uid) => db.checkins[uid] ?? []
-export function setCheckins(uid, checkins) {
-  db.checkins[uid] = checkins
-  persist()
+
+export async function getMeals(uid) {
+  const { data } = await supabase.from('meals').select('items').eq('user_id', uid).maybeSingle()
+  return data?.items ?? []
+}
+
+export async function setMeals(uid, meals) {
+  await supabase.from('meals').upsert({ user_id: uid, items: Array.isArray(meals) ? meals : [] })
+}
+
+export async function getCheckins(uid) {
+  const { data } = await supabase.from('checkins').select('items').eq('user_id', uid).maybeSingle()
+  return data?.items ?? []
+}
+
+export async function setCheckins(uid, checkins) {
+  await supabase
+    .from('checkins')
+    .upsert({ user_id: uid, items: Array.isArray(checkins) ? checkins : [] })
 }
 
 /* ---------- Coach ---------- */
-export const athletesOfCoach = (coachId) => db.users.filter((u) => u.coachId === coachId)
+export async function athletesOfCoach(coachId) {
+  const { data } = await supabase.from('users').select('*').eq('coach_id', coachId)
+  return (data ?? []).map(rowToUser)
+}
 
 /* ---------- Messages ---------- */
-export function conversation(a, b) {
-  return db.messages
-    .filter(
-      (m) =>
-        (m.fromId === a && m.toId === b) || (m.fromId === b && m.toId === a),
-    )
-    .sort((x, y) => x.createdAt.localeCompare(y.createdAt))
-}
-export function addMessage({ fromId, toId, text }) {
-  const msg = { id: randomUUID(), fromId, toId, text, createdAt: new Date().toISOString() }
-  db.messages.push(msg)
-  persist()
-  return msg
+export async function conversation(a, b) {
+  const { data } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`and(from_id.eq.${a},to_id.eq.${b}),and(from_id.eq.${b},to_id.eq.${a})`)
+    .order('created_at', { ascending: true })
+  return (data ?? []).map((m) => ({
+    id: m.id,
+    fromId: m.from_id,
+    toId: m.to_id,
+    text: m.text,
+    createdAt: m.created_at,
+  }))
 }
 
-/** Public view of a user (no password hash). */
+export async function addMessage({ fromId, toId, text }) {
+  const row = { id: randomUUID(), from_id: fromId, to_id: toId, text }
+  const { data, error } = await supabase.from('messages').insert(row).select('*').single()
+  if (error) throw new Error(`addMessage: ${error.message}`)
+  return { id: data.id, fromId: data.from_id, toId: data.to_id, text: data.text, createdAt: data.created_at }
+}
+
+/** Public view of a user (no password hash). Pure mapping — stays sync. */
 export const publicUser = (u) =>
   u && {
     id: u.id,

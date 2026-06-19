@@ -7,8 +7,13 @@ import { registerRoutes } from './routes.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// Seed/load the store (file-backed locally, in-memory on Vercel).
-initDb()
+// Seed/verify the Supabase store. Best-effort: if it fails (e.g. schema.sql
+// not run yet) we log and keep serving — the AI endpoints don't need the DB.
+try {
+  await initDb()
+} catch (err) {
+  console.error('[db] init failed:', err.message)
+}
 
 const app = express()
 // Photos arrive as base64 data URLs → allow a generous JSON body.
