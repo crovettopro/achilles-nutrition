@@ -120,6 +120,102 @@ export function bodyTrend(checkins: Checkin[], goal: Profile['goal']): Trend {
   return { hasData: true, latest, weightDelta, waistDelta, onTrack }
 }
 
+/* ============================================================
+   Evolution — the long-range view across ALL check-ins.
+   Powers the elegant progress chart (thin lines + % change).
+   ============================================================ */
+
+export interface EvolutionMetric {
+  /** Points in chronological order (oldest → newest). */
+  series: { date: string; value: number }[]
+  first: number
+  last: number
+  /** Signed change last − first (kg / cm). Negative = went down. */
+  absChange: number
+  /** Signed percentage change vs the first measurement. */
+  pctChange: number
+  firstDate: string
+  lastDate: string
+}
+
+export interface Evolution {
+  hasData: boolean
+  /** Number of check-ins. */
+  count: number
+  /** Whole weeks spanned between first and last measurement. */
+  weeks: number
+  weight?: EvolutionMetric
+  waist?: EvolutionMetric
+}
+
+function buildMetric(points: Checkin[], pick: (c: Checkin) => number): EvolutionMetric | undefined {
+  if (points.length < 2) return undefined
+  const series = points.map((c) => ({ date: c.date, value: pick(c) }))
+  const first = series[0].value
+  const last = series[series.length - 1].value
+  const absChange = +(last - first).toFixed(1)
+  const pctChange = first ? +(((last - first) / first) * 100).toFixed(1) : 0
+  return {
+    series,
+    first,
+    last,
+    absChange,
+    pctChange,
+    firstDate: series[0].date,
+    lastDate: series[series.length - 1].date,
+  }
+}
+
+/** Build the full evolution view from all check-ins (sorted oldest → newest). */
+export function progressEvolution(checkins: Checkin[]): Evolution {
+  const sorted = [...checkins].sort((a, b) => a.date.localeCompare(b.date))
+  if (sorted.length === 0) return { hasData: false, count: 0, weeks: 0 }
+
+  const first = new Date(sorted[0].date + 'T12:00:00')
+  const last = new Date(sorted[sorted.length - 1].date + 'T12:00:00')
+  const weeks = Math.max(1, Math.round((last.getTime() - first.getTime()) / (7 * 864e5)))
+
+  return {
+    hasData: true,
+    count: sorted.length,
+    weeks,
+    weight: buildMetric(sorted, (c) => c.weightKg),
+    waist: buildMetric(sorted, (c) => c.waistCm),
+  }
+}
+
+/**
+ * A warm, motivating one-liner based on how the weight is moving relative
+ * to the user's goal. Keeps the Achilles tone: steady, no hype.
+ */
+export function motivationalLine(evo: Evolution, goal: Profile['goal']): string {
+  const w = evo.weight
+  if (!w) return 'Tu segundo check-in dibujará la primera línea de tu evolución.'
+  const pct = w.pctChange // negative = lost weight
+  const down = Math.abs(pct)
+
+  if (goal === 'fat') {
+    if (pct <= -3) return `Transformación en marcha: −${down}% de peso. Así se forja el físico de Aquiles.`
+    if (pct <= -1) return 'Progreso sólido y sostenible. Bajas sin prisa pero sin pausa: el cuerpo lo nota.'
+    if (pct < 0) return 'Tendencia a la baja. Despacio y firme — la constancia siempre gana.'
+    if (pct === 0) return 'Semana estable. Ajusta un detalle y volverás a moverte hacia tu objetivo.'
+    return 'Pequeño repunte. No es un fallo, es información: vuelve al plan y sigue.'
+  }
+  // muscle
+  if (pct >= 3) return `Construyendo masa: +${down}% de peso con control. Vas en la dirección correcta.`
+  if (pct >= 1) return 'Subida limpia y progresiva. Estás ganando músculo de calidad.'
+  if (pct > 0) return 'Tendencia al alza, suave y sostenida. Buen trabajo: mantén el estímulo.'
+  if (pct === 0) return 'Semana estable. Un pequeño extra de comida y volverás a subir.'
+  return 'Bajada puntual. Asegura proteína y calorías esta semana y retoma la línea.'
+}
+
+/** Short Spanish date label, e.g. "19 jun". */
+export function shortDate(iso: string): string {
+  return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short' })
+    .format(new Date(iso + 'T12:00:00'))
+    .replace('.', '')
+}
+
 /** Trend headline shown on the Progress screen. */
 export function trendText(trend: Trend, goal: Profile['goal']): string {
   if (!trend.hasData) return 'Registra tu primer check-in para ver tu tendencia.'

@@ -16,6 +16,125 @@
   margin-bottom: 24px;
 }
 
+/* ---------- Evolution card ---------- */
+.evo {
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: 20px;
+  padding: 22px 22px 20px;
+  margin-bottom: 18px;
+}
+
+.evoHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.evoEyebrow {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.evoRange {
+  color: var(--text-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.evoMain {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.evoValue {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 38px;
+  line-height: 1;
+  color: var(--text);
+}
+
+.evoUnit {
+  font-size: 15px;
+  color: var(--text-3);
+  margin-left: 6px;
+}
+
+.evoChange {
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 4px;
+}
+
+.good {
+  color: var(--gold);
+}
+
+.bad {
+  color: var(--text-2);
+}
+
+.evoMeta {
+  color: var(--text-3);
+  font-size: 12px;
+  margin-top: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.evoWaist {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.evoWaistInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 78px;
+}
+
+.evoWaistLabel {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.evoWaistValue {
+  color: var(--text);
+  font-size: 14px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.evoWaistSpark {
+  flex: 1;
+}
+
+.evoWaistChange {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  text-align: right;
+}
+
+.evoPhrase {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--text);
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
 .trend {
   background: var(--surface-gradient);
   border: 1px solid var(--gold-soft);
