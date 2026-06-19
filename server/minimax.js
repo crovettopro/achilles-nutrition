@@ -1,5 +1,10 @@
-import { FOOD_ANALYSIS_PROMPT, MENU_ANALYSIS_PROMPT, PHILOSOPHY } from './prompts.js'
-import { normalizeFood, normalizeMenu } from './validate.js'
+import {
+  FOOD_ANALYSIS_PROMPT,
+  MENU_ANALYSIS_PROMPT,
+  PHILOSOPHY,
+  WEEKEND_KNOWLEDGE,
+} from './prompts.js'
+import { normalizeFoodVision, normalizeMenu } from './validate.js'
 
 /**
  * Server-side MiniMax client. Holds the API key (never sent to the browser)
@@ -61,7 +66,7 @@ export async function analyzeFood({ image, text }) {
     [{ role: 'system', content: FOOD_ANALYSIS_PROMPT }, userTurn(prompt, image)],
     model,
   )
-  return normalizeFood(parseJSON(raw))
+  return normalizeFoodVision(parseJSON(raw))
 }
 
 export async function analyzeMenu({ image }) {
@@ -80,10 +85,10 @@ export async function weekendStrategy({ plan, profile }) {
   const meal = plan === 'lunch' ? 'comer fuera (comida)' : 'cenar fuera (cena)'
   const goal = profile?.goal === 'muscle' ? 'ganar músculo limpio' : 'perder grasa'
   const raw = await chat([
-    { role: 'system', content: PHILOSOPHY },
+    { role: 'system', content: `${PHILOSOPHY}\n\n${WEEKEND_KNOWLEDGE}` },
     {
       role: 'user',
-      content: `Hoy voy a ${meal}. Mi objetivo es ${goal}. Dame una estrategia de una o dos frases para el resto del día. Solo el texto, sin preámbulos.`,
+      content: `Hoy voy a ${meal}. Mi objetivo es ${goal}. Dame una estrategia concreta de una o dos frases para el resto del día, basada en la filosofía de fin de semana. Solo el texto, sin preámbulos.`,
     },
   ])
   return raw.trim()
@@ -94,7 +99,7 @@ export async function coachReply({ history, profile }) {
   const turns = [
     {
       role: 'system',
-      content: `${PHILOSOPHY}\n\nContexto del usuario: objetivo ${goal}, ${profile?.age ?? '?'} años, ${profile?.weight ?? '?'} kg, ${profile?.height ?? '?'} cm.`,
+      content: `${PHILOSOPHY}\n\n${WEEKEND_KNOWLEDGE}\n\nContexto del usuario: objetivo ${goal}, ${profile?.age ?? '?'} años, ${profile?.weight ?? '?'} kg, ${profile?.height ?? '?'} cm.`,
     },
     ...(Array.isArray(history) ? history : []).map((m) => ({
       role: m.role === 'me' ? 'user' : 'assistant',

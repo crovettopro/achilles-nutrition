@@ -60,7 +60,7 @@ function Welcome({ onStart }: { onStart: () => void }) {
   return (
     <div className={`${styles.welcome} ach-fade`}>
       <div className={styles.monogram}>ATC</div>
-      <h1 className={styles.wordmark}>ACHILLES</h1>
+      <h1 className={styles.wordmark}>AQUILES</h1>
       <div className={styles.divider} />
       <p className={styles.tagline}>
         Construye el físico de Aquiles. Sin contar calorías. Sin obsesión.

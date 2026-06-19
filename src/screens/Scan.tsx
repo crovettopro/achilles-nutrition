@@ -12,7 +12,7 @@ type State = 'camera' | 'analyzing' | 'result'
 
 export default function Scan() {
   const navigate = useNavigate()
-  const { showMacros, addMeal } = useApp()
+  const { addMeal } = useApp()
   const [state, setState] = useState<State>('camera')
   const [description, setDescription] = useState('')
   const [photo, setPhoto] = useState<string | null>(null)
@@ -61,8 +61,15 @@ export default function Scan() {
 
         <div className={styles.resultHead}>
           <div className={styles.resultScore}>{result.score}</div>
-          <div className={styles.resultLabel}>Achilles Score</div>
+          <div className={styles.resultLabel}>Aquiles Score</div>
           <div className={styles.resultName}>{result.name}</div>
+          <div className={styles.resultKcal}>≈ {result.macros.kcal} kcal</div>
+        </div>
+
+        <div className={styles.macros}>
+          <Macro value={`${result.macros.protein}g`} label="Proteína" />
+          <Macro value={`${result.macros.carbs}g`} label="Carbos" />
+          <Macro value={`${result.macros.fat}g`} label="Grasa" />
         </div>
 
         <div className={styles.factors}>
@@ -76,12 +83,21 @@ export default function Scan() {
           ))}
         </div>
 
-        {showMacros && (
-          <div className={styles.macros}>
-            <Macro value={`${result.macros.protein}g`} label="Prot" />
-            <Macro value={`${result.macros.carbs}g`} label="Carbs" />
-            <Macro value={`${result.macros.fat}g`} label="Grasa" />
-            <Macro value={`${result.macros.kcal}`} label="kcal" />
+        {result.ingredients && result.ingredients.length > 0 && (
+          <div className={styles.ingredients}>
+            <div className={styles.ingredientsHead}>Ingredientes detectados</div>
+            {result.ingredients.map((ing, i) => (
+              <div key={`${ing.name}-${i}`} className={styles.ingredientRow}>
+                <span className={styles.ingredientName}>
+                  {ing.name}
+                  {ing.weight ? <span className={styles.ingredientWeight}> · {ing.weight} g</span> : null}
+                </span>
+                <span className={styles.ingredientKcal}>{ing.calories} kcal</span>
+              </div>
+            ))}
+            {result.confidence ? (
+              <div className={styles.confidence}>Confianza del análisis · {result.confidence}%</div>
+            ) : null}
           </div>
         )}
 

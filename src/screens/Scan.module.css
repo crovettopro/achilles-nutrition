@@ -108,6 +108,13 @@
   margin-top: 10px;
 }
 
+.resultKcal {
+  color: var(--gold);
+  font-size: 14px;
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+}
+
 .factors {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -127,9 +134,9 @@
 
 .macros {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin-top: 14px;
+  margin: 0 0 14px;
 }
 
 .macro {
@@ -149,6 +156,57 @@
   color: var(--text-3);
   font-size: 10px;
   margin-top: 2px;
+}
+
+.ingredients {
+  margin-top: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 18px 20px;
+}
+
+.ingredientsHead {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.ingredientRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ingredientRow:last-of-type {
+  border-bottom: none;
+}
+
+.ingredientName {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.ingredientWeight {
+  color: var(--text-3);
+}
+
+.ingredientKcal {
+  color: var(--text-2);
+  font-size: 13px;
+  flex-shrink: 0;
+  padding-left: 12px;
+}
+
+.confidence {
+  color: var(--text-3);
+  font-size: 12px;
+  margin-top: 12px;
+  text-align: center;
 }
 
 .resultActions {

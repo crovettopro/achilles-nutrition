@@ -46,7 +46,7 @@ export default function CoachHome() {
     <div className={`${styles.screen} ach-fade`}>
       <header className={styles.header}>
         <div>
-          <div className={styles.brand}>ACHILLES · PREPARADOR</div>
+          <div className={styles.brand}>AQUILES · PREPARADOR</div>
           <h1 className={styles.hello}>Hola, {user?.name}</h1>
         </div>
         <button className={styles.logout} onClick={logout}>

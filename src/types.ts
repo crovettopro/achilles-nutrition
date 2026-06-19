@@ -64,14 +64,28 @@ export interface Checkin {
   photo?: string
 }
 
+export interface FoodIngredient {
+  name: string
+  weight: number
+  prep: string
+  calories: number
+}
+
 /** Result of analysing a food photo / description. */
 export interface FoodAnalysis {
   name: string
   score: number
   /** Qualitative factors shown to the user. `positive: false` renders the ⚠ warning style. */
   factors: { label: string; positive: boolean }[]
-  /** Macros — hidden by default in the UI unless `showMacros` is on. */
   macros: Macros
+  /** Estimated total calories (same as macros.kcal). */
+  calories?: number
+  /** Model confidence 0–100. */
+  confidence?: number
+  /** Short visual reasoning behind the estimate. */
+  reasoning?: string
+  /** Per-ingredient breakdown. */
+  ingredients?: FoodIngredient[]
 }
 
 /** Result of analysing a restaurant menu. */

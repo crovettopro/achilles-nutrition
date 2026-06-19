@@ -54,11 +54,11 @@ export default function Login() {
       <div className={`${styles.inner} ach-fade`}>
         <div className={styles.brand}>
           <div className={styles.monogram}>ATC</div>
-          <h1 className={styles.wordmark}>ACHILLES</h1>
+          <h1 className={styles.wordmark}>AQUILES</h1>
         </div>
 
         <p className={styles.subtitle}>
-          {mode === 'login' ? 'Entra en tu protocolo.' : 'Crea tu cuenta.'}
+          {mode === 'login' ? 'La forma más simple de comer bien.' : 'Crea tu cuenta.'}
         </p>
 
         <form onSubmit={submit} className={styles.form}>

@@ -25,7 +25,7 @@ export default function Home() {
       {/* Header */}
       <header className={styles.header}>
         <div>
-          <div className={styles.brand}>ACHILLES</div>
+          <div className={styles.brand}>AQUILES</div>
           <div className={styles.date}>{formatToday()}</div>
         </div>
         <button className={styles.avatar} onClick={() => navigate('/account')} aria-label="Tu cuenta">

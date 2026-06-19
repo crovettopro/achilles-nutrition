@@ -30,7 +30,7 @@ export default function ScoreRing({ score, hasData = true }: { score: number; ha
       </svg>
       <div className={styles.center}>
         <div className={styles.number}>{hasData ? score : '—'}</div>
-        <div className={styles.label}>Achilles Score</div>
+        <div className={styles.label}>Aquiles Score</div>
       </div>
     </div>
   )
