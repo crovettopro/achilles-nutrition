@@ -9,3 +9,4 @@ dist-ssr
 .vite
 *.tsbuildinfo
 server/data
+.vercel
