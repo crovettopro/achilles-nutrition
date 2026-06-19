@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
+import { useAuth } from '../context/AuthContext'
 import ScoreRing from '../components/ScoreRing'
 import { formatToday, goalLabel, statusText } from '../lib/score'
 import { dailyScore, mealsOn, todayISO, weeklyAdherence } from '../lib/metrics'
@@ -13,6 +14,8 @@ function formatSteps(steps?: number): string {
 export default function Home() {
   const navigate = useNavigate()
   const { profile, meals, checkins } = useApp()
+  const { user } = useAuth()
+  const initial = user?.name?.trim()?.charAt(0).toUpperCase() || 'A'
 
   const breakdown = dailyScore(meals, profile)
   const todaysMeals = mealsOn(meals, todayISO())
@@ -29,7 +32,7 @@ export default function Home() {
           <div className={styles.date}>{formatToday()}</div>
         </div>
         <button className={styles.avatar} onClick={() => navigate('/account')} aria-label="Tu cuenta">
-          A
+          {initial}
         </button>
       </header>
 
