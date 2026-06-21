@@ -1,4 +1,4 @@
-import type { Checkin, Meal, Profile } from '../types'
+import type { AlcoholLog, Checkin, Macros, Meal, Profile } from '../types'
 
 /* ============================================================
    Achilles Nutrition — the engine behind the numbers.
@@ -29,6 +29,172 @@ export function maintenanceKcal(p: Profile): number {
 export function proteinTarget(p: Profile): number {
   const perKg = p.goal === 'fat' ? 2.2 : 1.9
   return Math.round(p.weight * perKg)
+}
+
+/**
+ * Daily calorie target. Fat loss → a moderate deficit; muscle → a small surplus.
+ * Unlike the internal maintenance figure, this IS shown to the user now.
+ */
+export function calorieTarget(p: Profile): number {
+  const maint = maintenanceKcal(p)
+  const raw = p.goal === 'fat' ? maint * 0.85 : maint * 1.1
+  return Math.round(raw / 10) * 10
+}
+
+/* ============================================================
+   Daily nutrition — accumulate today's meals vs the targets.
+   ============================================================ */
+
+export interface DailyTotals {
+  protein: number
+  kcal: number
+  carbs: number
+  fat: number
+  meals: number
+}
+
+/** Sum today's logged meals into running protein / calorie totals. */
+export function dailyTotals(meals: Meal[], date = todayISO()): DailyTotals {
+  const today = mealsOn(meals, date)
+  const sum = (pick: (m: Meal) => number) => Math.round(today.reduce((s, m) => s + pick(m), 0))
+  return {
+    protein: sum((m) => m.macros?.protein ?? 0),
+    kcal: sum((m) => m.macros?.kcal ?? 0),
+    carbs: sum((m) => m.macros?.carbs ?? 0),
+    fat: sum((m) => m.macros?.fat ?? 0),
+    meals: today.length,
+  }
+}
+
+export type DayTone = 'good' | 'warn' | 'bad' | 'neutral'
+
+/** One-line "estado del día" headline from today's totals vs the targets. */
+export function dayStatus(totals: DailyTotals, p: Profile, kcalTarget = calorieTarget(p)): {
+  label: string
+  tone: DayTone
+} {
+  if (totals.meals === 0) return { label: 'Empieza a registrar tus comidas', tone: 'neutral' }
+  const pTarget = proteinTarget(p)
+  const proteinPct = pTarget ? totals.protein / pTarget : 1
+  const overFat = p.goal === 'fat' && totals.kcal > kcalTarget * 1.12
+  const overMuscle = p.goal === 'muscle' && totals.kcal > kcalTarget * 1.2
+  if (overFat || overMuscle) return { label: 'Te estás alejando de tu objetivo', tone: 'bad' }
+  if (proteinPct < 0.7) return { label: 'Necesitas más proteína', tone: 'warn' }
+  return { label: 'Vas por buen camino', tone: 'good' }
+}
+
+export interface MacroAssessment {
+  protein: 'baja' | 'correcta' | 'alta'
+  carbs: 'adecuados' | 'altos'
+  fat: 'controlada' | 'alta'
+  /** Natural-language summary, e.g. "Carbohidratos adecuados, pero poca proteína." */
+  comment: string
+}
+
+const cap = (s: string) => (s ? s[0].toUpperCase() + s.slice(1) : s)
+
+/** Client-side meal score from macros (mirror of the server's). Used when the
+ * user adds a manual ingredient and we recompute locally. */
+export function mealScoreFromMacros(m: Macros): number {
+  if (!m.kcal) return 60
+  const protRatio = (m.protein * 4) / m.kcal
+  const fatRatio = (m.fat * 9) / m.kcal
+  const s = 50 + protRatio * 120 - Math.max(0, fatRatio - 0.4) * 70
+  return Math.max(0, Math.min(100, Math.round(s)))
+}
+
+/** Assess a single meal's macro balance for the goal (protein-first). */
+export function assessMeal(m: Macros): MacroAssessment {
+  const kcal = m.kcal || m.protein * 4 + m.carbs * 4 + m.fat * 9
+  const pr = kcal ? (m.protein * 4) / kcal : 0
+  const cr = kcal ? (m.carbs * 4) / kcal : 0
+  const fr = kcal ? (m.fat * 9) / kcal : 0
+
+  const protein: MacroAssessment['protein'] = pr >= 0.28 ? 'alta' : pr >= 0.18 ? 'correcta' : 'baja'
+  const carbs: MacroAssessment['carbs'] = cr <= 0.5 ? 'adecuados' : 'altos'
+  const fat: MacroAssessment['fat'] = fr <= 0.38 ? 'controlada' : 'alta'
+
+  const good: string[] = []
+  const bad: string[] = []
+  ;(protein === 'baja' ? bad : good).push(
+    protein === 'alta' ? 'buena proteína' : protein === 'correcta' ? 'proteína correcta' : 'poca proteína',
+  )
+  ;(carbs === 'altos' ? bad : good).push(
+    carbs === 'altos' ? 'carbohidratos altos' : 'carbohidratos adecuados',
+  )
+  if (fat === 'alta') bad.push('grasa alta')
+
+  let comment = good.join(', ')
+  if (bad.length) comment = (comment ? comment + ', pero ' : '') + bad.join(' y ')
+  return { protein, carbs, fat, comment: cap(comment) + '.' }
+}
+
+/**
+ * Final verdict shown after a meal: does it move you toward your goal, and
+ * how much protein / calories you have left for the rest of the day.
+ */
+export function mealVerdict(
+  meal: { score: number; macros: Macros },
+  totalsAfter: DailyTotals,
+  p: Profile,
+  kcalTarget = calorieTarget(p),
+): string {
+  const pTarget = proteinTarget(p)
+  const remainingP = Math.max(0, pTarget - totalsAfter.protein)
+  const remainingK = kcalTarget - totalsAfter.kcal
+
+  let s =
+    meal.score >= 75
+      ? 'Buena comida: te acerca a tu objetivo.'
+      : meal.score >= 55
+        ? 'Comida correcta para tu objetivo.'
+        : 'Esta comida es mejorable para tu objetivo.'
+
+  if (remainingP > 5) s += ` Te faltan ${remainingP} g de proteína hoy; repártelos en tus próximas comidas.`
+  else s += ' Ya has cubierto tu objetivo de proteína del día.'
+
+  if (remainingK < -50) s += ` Vas ${Math.abs(Math.round(remainingK))} kcal por encima del objetivo: compénsalo caminando.`
+  else if (remainingK > 50 && p.goal === 'fat') s += ` Te quedan ~${Math.round(remainingK)} kcal de margen.`
+
+  return s
+}
+
+/* ---------- Alcohol → next-day calorie adjustment ---------- */
+
+/** The day before `date` (YYYY-MM-DD). */
+export function previousISO(date = todayISO()): string {
+  const d = new Date(date + 'T12:00:00')
+  d.setDate(d.getDate() - 1)
+  return todayISO(d)
+}
+
+/** Total alcohol calories logged on a given date. */
+export function alcoholKcalOn(logs: AlcoholLog[], date: string): number {
+  return (logs ?? []).filter((l) => l.date === date).reduce((s, l) => s + (l.kcal || 0), 0)
+}
+
+export interface AdjustedTarget {
+  base: number
+  /** Calories deducted today because of YESTERDAY's drinking. */
+  penalty: number
+  target: number
+}
+
+/** Today's effective calorie target after subtracting yesterday's alcohol. */
+export function adjustedCalorieTarget(
+  p: Profile,
+  logs: AlcoholLog[],
+  date = todayISO(),
+): AdjustedTarget {
+  const base = calorieTarget(p)
+  const penalty = alcoholKcalOn(logs, previousISO(date))
+  return { base, penalty, target: Math.max(0, base - penalty) }
+}
+
+/** Rough calorie estimate for a drinking session (for the next-day deduction). */
+export function estimateAlcoholKcal(kind: AlcoholLog['kind'], drinks: number): number {
+  if (kind === 'wine_beer') return 250 // a couple of wines/beers
+  return Math.max(1, Math.round(drinks)) * 180 // spirits + mixer ≈ 180 kcal each
 }
 
 /** Local calendar date as YYYY-MM-DD (not UTC — avoids late-night date shifts). */

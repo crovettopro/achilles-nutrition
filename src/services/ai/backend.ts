@@ -1,5 +1,5 @@
 import type { ChatMessage, FoodAnalysis, MenuAnalysis, Profile, WeekendPlan } from '../../types'
-import type { AIService, FoodInput, MenuInput } from './types'
+import type { AIService, AlcoholInput, FoodInput, MenuInput } from './types'
 
 /**
  * Talks to our own backend (`/api/ai/*`), which holds the MiniMax key
@@ -31,6 +31,11 @@ export class BackendAIService implements AIService {
 
   async weekendStrategy(plan: WeekendPlan, profile: Profile): Promise<string> {
     const { strategy } = await this.post<{ strategy: string }>('/ai/weekend', { plan, profile })
+    return strategy
+  }
+
+  async alcoholStrategy(input: AlcoholInput, profile: Profile): Promise<string> {
+    const { strategy } = await this.post<{ strategy: string }>('/ai/alcohol', { ...input, profile })
     return strategy
   }
 

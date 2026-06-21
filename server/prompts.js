@@ -53,13 +53,26 @@ No incluyas texto fuera del JSON.`
  * Weekend-eating philosophy (from the coach). Injected as knowledge so the
  * weekend strategy and coach answers are correct and on-brand.
  */
-export const WEEKEND_KNOWLEDGE = `Filosofía de fin de semana de Aquiles:
-- De lunes a viernes céntrate en los fundamentos: entrenos, nutrición y pasos. Nada más.
-- El objetivo del finde NO es perder grasa: es no estropear el trabajo de la semana.
-- Nada de cheat days: acaban en miles de calorías extra y borran el déficit. Necesitas control, no perfección.
-- Mantén la misma estructura que entre semana: dos comidas principales, prioriza proteína en ambas y evita picar todo el día.
-- Si sabes que harás una comida muy calórica (hamburguesa, pizza, celebración, comida familiar): no desayunes y reserva la mayoría de tus calorías para esa comida.
-- Estrategia más simple: una comida en casa y una comida fuera.
-- Regla de oro al comer fuera: prioriza SIEMPRE la proteína (más saciedad, protege la masa muscular) frente a más pan, patatas o postre.
-- Si comes de más, camina más. Los pasos compensan parte de las calorías; sin castigarte con cardio.
-- Alcohol: cuanto menos mejor, pero se puede disfrutar. Prioriza vino o cerveza; los combinados, con agua con gas o refrescos zero, nunca azucarados (una copa con refresco azucarado suma 250-300 kcal).`
+export const WEEKEND_KNOWLEDGE = `Filosofía de fin de semana de Aquiles (tono flexible, nada estricto — el finde es para disfrutar sin estropear la semana):
+- El objetivo del finde NO es perder grasa: es mantener lo trabajado entre semana. Control, no perfección.
+- Camina al menos 10.000 pasos al día: es el mejor seguro para compensar y mantenerte en rango. Inclúyelo SIEMPRE en la estrategia.
+- Registra (trackea) TODAS las comidas del día en la app, también las de fuera. Así sabes dónde estás respecto a tu objetivo de calorías.
+- Mantén la estructura de siempre: dos comidas principales y prioriza la proteína en ambas (más saciedad, protege el músculo).
+- Si sabes que harás una comida muy calórica (hamburguesa, pizza, comida familiar): reserva la mayoría de tus calorías para esa comida y llega con hambre, no con ansiedad.
+- Postre: no lo prohíbas. Si al final del día estás POR DEBAJO de tu objetivo de calorías, puedes permitirte un postre sin culpa. La clave es que lo registres.
+- Si un día te pasas, no pasa nada: camina más al día siguiente y vuelve a tus dos comidas con proteína.
+- Alcohol: se puede disfrutar. Prioriza vino o cerveza; los combinados siempre con agua con gas o refrescos zero, nunca azucarados.`
+
+/**
+ * Alcohol-strategy knowledge (from the coach). Powers the "Alcohol Mode"
+ * inside Weekend Mode.
+ */
+export const ALCOHOL_KNOWLEDGE = `Estrategia de Aquiles cuando se va a beber alcohol:
+- Si puedes, toma un solo tipo de alcohol durante la noche (no mezcles): el cuerpo lo gestiona mejor.
+- Lo mejor es vino o cerveza. Si son combinados, mezcla SIEMPRE con agua con gas o refresco zero, nunca con bebidas azucaradas.
+- Aliméntate bien ANTES de beber: nunca con el estómago vacío.
+- Mantén la proteína alta durante todo el día (protege el músculo y da saciedad).
+- Come frutas antioxidantes como los arándanos para ayudar a tu cuerpo.
+- Reduce los carbohidratos en la medida de lo posible ese día para dejar margen a las calorías del alcohol.
+- Bebe un vaso de agua entre copas: te hidratas y bebes menos.
+- Importante: al día siguiente registra lo que has bebido en la app. Esas calorías se restarán de tu objetivo del día siguiente para mantener el déficit y seguir perdiendo grasa.`

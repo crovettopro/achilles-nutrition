@@ -209,6 +209,205 @@
   text-align: center;
 }
 
+.macroComment {
+  color: var(--text-2);
+  font-size: 13px;
+  text-align: center;
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+/* ---------- manual add ---------- */
+.addItem {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--border-3);
+  border-radius: var(--r-card);
+  padding: 14px;
+  color: var(--gold);
+  font-size: 14px;
+  margin-top: 14px;
+}
+
+.manual {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card-lg);
+  padding: 18px 18px 16px;
+  margin-top: 14px;
+}
+
+.manualHead {
+  color: var(--text);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.manualName {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.manualName:focus {
+  border-color: var(--gold-soft);
+}
+
+.manualGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.miniField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.miniLabel {
+  color: var(--text-3);
+  font-size: 11px;
+  text-align: center;
+}
+
+.miniInput {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 6px;
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 16px;
+  text-align: center;
+  outline: none;
+}
+
+.miniInput:focus {
+  border-color: var(--gold-soft);
+}
+
+.manualHint {
+  color: var(--text-3);
+  font-size: 11px;
+  margin: 10px 0 14px;
+}
+
+.manualActions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ---------- day summary ---------- */
+.day {
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: 20px;
+  padding: 20px 22px;
+  margin-top: 20px;
+}
+
+.dayHead {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.dayGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dayStatLabel {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.dayStatValue {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.dayStatTarget {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.bar {
+  height: 5px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.dayStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.dayStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.good {
+  color: var(--gold);
+}
+.good .dayStatusDot {
+  background: var(--gold);
+}
+.warn {
+  color: #e0a86b;
+}
+.warn .dayStatusDot {
+  background: #e0a86b;
+}
+.bad {
+  color: #d9836b;
+}
+.bad .dayStatusDot {
+  background: #d9836b;
+}
+.neutral {
+  color: var(--text-2);
+}
+.neutral .dayStatusDot {
+  background: var(--text-2);
+}
+
+.verdict {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--text);
+  margin: 18px 2px 0;
+}
+
 .resultActions {
   display: flex;
   gap: 12px;

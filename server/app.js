@@ -1,7 +1,7 @@
 import express from 'express'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { analyzeFood, analyzeMenu, coachReply, weekendStrategy } from './minimax.js'
+import { alcoholStrategy, analyzeFood, analyzeMenu, coachReply, weekendStrategy } from './minimax.js'
 import { initDb } from './db.js'
 import { registerRoutes } from './routes.js'
 
@@ -39,6 +39,7 @@ registerRoutes(app)
 app.post('/api/ai/food', handler(analyzeFood))
 app.post('/api/ai/menu', handler(analyzeMenu))
 app.post('/api/ai/weekend', handler(async (body) => ({ strategy: await weekendStrategy(body) })))
+app.post('/api/ai/alcohol', handler(async (body) => ({ strategy: await alcoholStrategy(body) })))
 app.post('/api/ai/coach', handler(async (body) => ({ reply: await coachReply(body) })))
 
 // Local production (`npm start`): serve the built SPA from the same origin.

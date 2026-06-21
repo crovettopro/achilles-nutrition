@@ -174,6 +174,7 @@ export async function createUser({ email, passwordHash, role, name }) {
     })
     await supabase.from('meals').upsert({ user_id: id, items: [] })
     await supabase.from('checkins').upsert({ user_id: id, items: [] })
+    await supabase.from('alcohol').upsert({ user_id: id, items: [] })
   }
   return rowToUser(data)
 }
@@ -228,6 +229,15 @@ export async function setCheckins(uid, checkins) {
   await supabase
     .from('checkins')
     .upsert({ user_id: uid, items: Array.isArray(checkins) ? checkins : [] })
+}
+
+export async function getAlcohol(uid) {
+  const { data } = await supabase.from('alcohol').select('items').eq('user_id', uid).maybeSingle()
+  return data?.items ?? []
+}
+
+export async function setAlcohol(uid, logs) {
+  await supabase.from('alcohol').upsert({ user_id: uid, items: Array.isArray(logs) ? logs : [] })
 }
 
 /* ---------- Coach ---------- */

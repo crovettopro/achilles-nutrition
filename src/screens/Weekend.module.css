@@ -60,3 +60,127 @@
   color: var(--text);
   line-height: 1.4;
 }
+
+/* ---------- Alcohol Mode ---------- */
+.alcohol {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.alcoholEyebrow {
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.alcoholOpen {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-card-lg);
+  padding: 22px 24px;
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--text);
+}
+
+.alcoholQ {
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.kinds {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kind {
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-card-lg);
+  padding: 18px 22px;
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text);
+  transition: border-color 0.2s ease;
+}
+
+.kind[data-selected='true'] {
+  border-color: var(--gold);
+}
+
+.stepperRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.stepperLabel {
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stepBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--gold);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.stepVal {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--text);
+  min-width: 22px;
+  text-align: center;
+}
+
+.genBtn {
+  width: 100%;
+  margin-top: 16px;
+  background: var(--gold);
+  color: #1a1408;
+  border: none;
+  border-radius: var(--r-btn);
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.estimate {
+  margin-top: 16px;
+}
+
+.estimateText {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.saved {
+  color: var(--gold);
+  font-size: 14px;
+  line-height: 1.45;
+  background: var(--gold-soft);
+  border-radius: 14px;
+  padding: 16px 18px;
+}

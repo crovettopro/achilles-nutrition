@@ -1,5 +1,5 @@
 import type { ChatMessage, FoodAnalysis, MenuAnalysis, Profile, WeekendPlan } from '../../types'
-import type { AIService, FoodInput, MenuInput } from './types'
+import type { AIService, AlcoholInput, FoodInput, MenuInput } from './types'
 import { FOOD_ANALYSIS_PROMPT, MENU_ANALYSIS_PROMPT, PHILOSOPHY } from './prompts'
 import { normalizeFood, normalizeMenu } from './validate'
 
@@ -114,6 +114,23 @@ export class MiniMaxAIService implements AIService {
         content: `Hoy voy a ${meal}. Mi objetivo es ${
           profile.goal === 'fat' ? 'perder grasa' : 'ganar músculo limpio'
         }. Dame una estrategia de una o dos frases para el resto del día. Solo el texto, sin preámbulos.`,
+      },
+    ])
+    return raw.trim()
+  }
+
+  async alcoholStrategy(input: AlcoholInput, profile: Profile): Promise<string> {
+    const what =
+      input.kind === 'spirits'
+        ? `voy a tomar copas (unas ${input.drinks || 'pocas'})`
+        : 'voy a tomar solo vino o cerveza'
+    const raw = await this.chat([
+      { role: 'system', content: PHILOSOPHY },
+      {
+        role: 'user',
+        content: `Hoy ${what}. Mi objetivo es ${
+          profile.goal === 'fat' ? 'perder grasa' : 'ganar músculo limpio'
+        }. Dame una estrategia de 3 o 4 frases para beber de forma inteligente hoy. Recuérdame registrar mañana lo que beba. Solo el texto, sin preámbulos.`,
       },
     ])
     return raw.trim()

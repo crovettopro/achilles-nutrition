@@ -2,8 +2,18 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 import ScoreRing from '../components/ScoreRing'
+import DailyTargets from '../components/DailyTargets'
 import { formatToday, goalLabel, statusText } from '../lib/score'
-import { dailyScore, mealsOn, todayISO, weeklyAdherence } from '../lib/metrics'
+import {
+  adjustedCalorieTarget,
+  dailyScore,
+  dailyTotals,
+  dayStatus,
+  mealsOn,
+  proteinTarget,
+  todayISO,
+  weeklyAdherence,
+} from '../lib/metrics'
 import styles from './Home.module.css'
 
 function formatSteps(steps?: number): string {
@@ -13,7 +23,7 @@ function formatSteps(steps?: number): string {
 
 export default function Home() {
   const navigate = useNavigate()
-  const { profile, meals, checkins } = useApp()
+  const { profile, meals, checkins, alcohol } = useApp()
   const { user } = useAuth()
   const initial = user?.name?.trim()?.charAt(0).toUpperCase() || 'A'
 
@@ -22,6 +32,10 @@ export default function Home() {
   const adherence = weeklyAdherence(meals)
   const proteinMet = breakdown.proteinGrams >= breakdown.proteinTarget && breakdown.hasData
   const latestSteps = checkins[0]?.steps
+
+  const totals = dailyTotals(meals)
+  const adj = adjustedCalorieTarget(profile, alcohol)
+  const dStatus = dayStatus(totals, profile, adj.target)
 
   return (
     <div className={`${styles.screen} ach-fade`}>
@@ -49,6 +63,19 @@ export default function Home() {
 
       <div className={styles.goal}>
         Objetivo · <span>{goalLabel(profile.goal)}</span>
+      </div>
+
+      {/* Daily targets */}
+      <div className={styles.daily}>
+        <DailyTargets
+          heading="Hoy vs tu objetivo"
+          protein={totals.protein}
+          proteinTarget={proteinTarget(profile)}
+          kcal={totals.kcal}
+          kcalTarget={adj.target}
+          status={dStatus}
+          penalty={adj.penalty}
+        />
       </div>
 
       {/* Metrics */}

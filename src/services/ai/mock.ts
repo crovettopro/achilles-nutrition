@@ -1,5 +1,5 @@
 import type { ChatMessage, FoodAnalysis, MenuAnalysis, Profile, WeekendPlan } from '../../types'
-import type { AIService, FoodInput, MenuInput } from './types'
+import type { AIService, AlcoholInput, FoodInput, MenuInput } from './types'
 
 const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
@@ -37,6 +37,13 @@ export class MockAIService implements AIService {
     return plan === 'lunch'
       ? 'Prioriza proteína durante el día y elimina el desayuno. Bebe agua antes de salir.'
       : 'Mantén el día ligero y rico en proteína. Reserva tus carbohidratos para la cena.'
+  }
+
+  async alcoholStrategy(input: AlcoholInput, _profile: Profile): Promise<string> {
+    await delay(500)
+    return input.kind === 'spirits'
+      ? 'Toma un solo tipo de copa y mézclala con agua con gas, nunca con refrescos azucarados. Come bien antes, mantén la proteína alta hoy y reduce los carbohidratos. Bebe un vaso de agua entre copas. Mañana registra lo que has bebido para restarlo de tu objetivo.'
+      : 'Quédate solo con vino o cerveza, sin mezclar. Come bien antes de salir, prioriza la proteína durante el día y añade frutos rojos antioxidantes. Bebe agua entre consumiciones. Mañana registra lo que has bebido para restarlo de tu objetivo.'
   }
 
   async coachReply(history: ChatMessage[], _profile: Profile): Promise<string> {

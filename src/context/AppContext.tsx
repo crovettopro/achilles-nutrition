@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { Activity, Checkin, ChatMessage, Goal, Macros, Meal, Profile } from '../types'
+import type { Activity, AlcoholLog, Checkin, ChatMessage, Goal, Macros, Meal, Profile } from '../types'
 import { COACH_INTRO } from '../data/demo'
 import { api } from '../lib/api'
 import { todayISO } from '../lib/metrics'
@@ -23,6 +23,7 @@ interface AppContextValue {
   showMacros: boolean
   meals: Meal[]
   checkins: Checkin[]
+  alcohol: AlcoholLog[]
   chat: ChatMessage[]
   coachId: string | null
   setGoal: (goal: Goal) => void
@@ -31,6 +32,7 @@ interface AppContextValue {
   completeOnboarding: () => void
   addMeal: (meal: { name: string; score: number; macros: Macros }) => void
   addCheckin: (checkin: Omit<Checkin, 'id' | 'date'>) => void
+  addAlcohol: (log: Omit<AlcoholLog, 'id' | 'date'>) => void
   addChatMessage: (role: ChatMessage['role'], text: string) => ChatMessage
   reloadCoach: () => Promise<void>
 }
@@ -50,6 +52,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE)
   const [meals, setMeals] = useState<Meal[]>([])
   const [checkins, setCheckins] = useState<Checkin[]>([])
+  const [alcohol, setAlcohol] = useState<AlcoholLog[]>([])
   const [coachId, setCoachId] = useState<string | null>(null)
   const [chat, setChat] = useState<ChatMessage[]>([{ id: nextId(), role: 'ai', text: COACH_INTRO }])
   const [loaded, setLoaded] = useState(false)
@@ -57,13 +60,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Load the athlete's data from the server on mount.
   useEffect(() => {
-    api<{ profile: Profile | null; meals: Meal[]; checkins: Checkin[]; coachId: string | null }>(
-      '/me/data',
-    )
+    api<{
+      profile: Profile | null
+      meals: Meal[]
+      checkins: Checkin[]
+      alcohol: AlcoholLog[]
+      coachId: string | null
+    }>('/me/data')
       .then((d) => {
         if (d.profile) setProfile({ ...DEFAULT_PROFILE, ...d.profile })
         setMeals(Array.isArray(d.meals) ? d.meals : [])
         setCheckins(Array.isArray(d.checkins) ? d.checkins : [])
+        setAlcohol(Array.isArray(d.alcohol) ? d.alcohol : [])
         setCoachId(d.coachId ?? null)
       })
       .catch(() => {})
@@ -113,6 +121,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const addAlcohol = useCallback((log: Omit<AlcoholLog, 'id' | 'date'>) => {
+    setAlcohol((prev) => {
+      const next = [{ ...log, id: nextId(), date: todayISO() }, ...prev]
+      void api('/me/alcohol', { method: 'PUT', body: { alcohol: next } }).catch(() => {})
+      return next
+    })
+  }, [])
+
   const addChatMessage = useCallback((role: ChatMessage['role'], text: string) => {
     const msg: ChatMessage = { id: nextId(), role, text }
     setChat((prev) => [...prev, msg])
@@ -131,6 +147,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showMacros,
       meals,
       checkins,
+      alcohol,
       chat,
       coachId,
       setGoal,
@@ -139,6 +156,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       completeOnboarding,
       addMeal,
       addCheckin,
+      addAlcohol,
       addChatMessage,
       reloadCoach,
     }),
@@ -147,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showMacros,
       meals,
       checkins,
+      alcohol,
       chat,
       coachId,
       setGoal,
@@ -155,6 +174,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       completeOnboarding,
       addMeal,
       addCheckin,
+      addAlcohol,
       addChatMessage,
       reloadCoach,
     ],

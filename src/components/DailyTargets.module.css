@@ -1,0 +1,100 @@
+.day {
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: 20px;
+  padding: 20px 22px;
+}
+
+.head {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statLabel {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.statTarget {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.bar {
+  height: 5px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.penalty {
+  color: #e0a86b;
+  font-size: 12px;
+  margin-top: 14px;
+  line-height: 1.4;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.good {
+  color: var(--gold);
+}
+.good .dot {
+  background: var(--gold);
+}
+.warn {
+  color: #e0a86b;
+}
+.warn .dot {
+  background: #e0a86b;
+}
+.bad {
+  color: #d9836b;
+}
+.bad .dot {
+  background: #d9836b;
+}
+.neutral {
+  color: var(--text-2);
+}
+.neutral .dot {
+  background: var(--text-2);
+}

@@ -51,6 +51,19 @@ export interface Meal {
   macros: Macros
 }
 
+/** A logged drinking occasion. Its calories are subtracted from NEXT day's target. */
+export interface AlcoholLog {
+  id: string
+  /** ISO date (YYYY-MM-DD) the drinking happened. */
+  date: string
+  /** What they drank. */
+  kind: 'wine_beer' | 'spirits'
+  /** Approx. number of drinks (for spirits). */
+  drinks: number
+  /** Estimated calories of the session. */
+  kcal: number
+}
+
 /** A weekly body check-in (the "seguimiento semanal"). */
 export interface Checkin {
   id: string

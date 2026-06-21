@@ -40,6 +40,12 @@ create table if not exists public.checkins (
   items   jsonb not null default '[]'::jsonb
 );
 
+-- ---------- alcohol (un array jsonb por usuario; se reemplaza entero) ----------
+create table if not exists public.alcohol (
+  user_id text primary key references public.users (id) on delete cascade,
+  items   jsonb not null default '[]'::jsonb
+);
+
 -- ---------- messages (coach ↔ athlete) ----------
 create table if not exists public.messages (
   id         text primary key,
@@ -57,4 +63,5 @@ alter table public.users    enable row level security;
 alter table public.profiles enable row level security;
 alter table public.meals    enable row level security;
 alter table public.checkins enable row level security;
+alter table public.alcohol  enable row level security;
 alter table public.messages enable row level security;

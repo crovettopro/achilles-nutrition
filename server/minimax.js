@@ -1,4 +1,5 @@
 import {
+  ALCOHOL_KNOWLEDGE,
   FOOD_ANALYSIS_PROMPT,
   MENU_ANALYSIS_PROMPT,
   PHILOSOPHY,
@@ -88,7 +89,23 @@ export async function weekendStrategy({ plan, profile }) {
     { role: 'system', content: `${PHILOSOPHY}\n\n${WEEKEND_KNOWLEDGE}` },
     {
       role: 'user',
-      content: `Hoy voy a ${meal}. Mi objetivo es ${goal}. Dame una estrategia concreta de una o dos frases para el resto del día, basada en la filosofía de fin de semana. Solo el texto, sin preámbulos.`,
+      content: `Hoy voy a ${meal}. Mi objetivo es ${goal}. Dame una estrategia concreta y flexible de 2 o 3 frases para el resto del día, basada en la filosofía de fin de semana. Incluye SIEMPRE caminar al menos 10.000 pasos y recordar registrar todas las comidas. Nada estricto. Solo el texto, sin preámbulos.`,
+    },
+  ])
+  return raw.trim()
+}
+
+export async function alcoholStrategy({ kind, drinks, profile }) {
+  const goal = profile?.goal === 'muscle' ? 'ganar músculo limpio' : 'perder grasa'
+  const what =
+    kind === 'spirits'
+      ? `voy a tomar copas (unas ${drinks || 'pocas'} aproximadamente)`
+      : 'voy a tomar solo vino o cerveza'
+  const raw = await chat([
+    { role: 'system', content: `${PHILOSOPHY}\n\n${ALCOHOL_KNOWLEDGE}` },
+    {
+      role: 'user',
+      content: `Hoy ${what}. Mi objetivo es ${goal}. Dame una estrategia concreta de 3 o 4 frases para beber de la forma más inteligente posible hoy, basada en la filosofía de alcohol. Termina recordándome que mañana registre lo que he bebido para restarlo del objetivo. Solo el texto, sin preámbulos.`,
     },
   ])
   return raw.trim()

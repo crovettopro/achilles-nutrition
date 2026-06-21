@@ -46,12 +46,13 @@ export function registerRoutes(app) {
   /* ---------------- Athlete data ---------------- */
   app.get('/api/me/data', requireAuth, route(async (req, res) => {
     const uid = req.user.id
-    const [profile, meals, checkins] = await Promise.all([
+    const [profile, meals, checkins, alcohol] = await Promise.all([
       db.getProfile(uid),
       db.getMeals(uid),
       db.getCheckins(uid),
+      db.getAlcohol(uid),
     ])
-    res.json({ profile, meals, checkins, coachId: req.user.coachId ?? null })
+    res.json({ profile, meals, checkins, alcohol, coachId: req.user.coachId ?? null })
   }))
 
   app.put('/api/me/profile', requireAuth, route(async (req, res) => {
@@ -66,6 +67,11 @@ export function registerRoutes(app) {
 
   app.put('/api/me/checkins', requireAuth, route(async (req, res) => {
     await db.setCheckins(req.user.id, Array.isArray(req.body?.checkins) ? req.body.checkins : [])
+    res.json({ ok: true })
+  }))
+
+  app.put('/api/me/alcohol', requireAuth, route(async (req, res) => {
+    await db.setAlcohol(req.user.id, Array.isArray(req.body?.alcohol) ? req.body.alcohol : [])
     res.json({ ok: true })
   }))
 

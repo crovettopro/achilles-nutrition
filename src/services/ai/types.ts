@@ -31,6 +31,15 @@ export interface AIService {
   analyzeMenu(input: MenuInput): Promise<MenuAnalysis>
   /** Generate a weekend-eating strategy for the user's plan. */
   weekendStrategy(plan: WeekendPlan, profile: Profile): Promise<string>
+  /** Generate a smart-drinking strategy (Alcohol Mode). */
+  alcoholStrategy(input: AlcoholInput, profile: Profile): Promise<string>
   /** Reply to the user in the coach chat. */
   coachReply(history: ChatMessage[], profile: Profile): Promise<string>
+}
+
+export interface AlcoholInput {
+  /** wine_beer = solo vino/cerveza; spirits = copas. */
+  kind: 'wine_beer' | 'spirits'
+  /** Approx. number of drinks when kind = spirits. */
+  drinks?: number
 }

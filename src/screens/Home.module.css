@@ -57,6 +57,10 @@
   font-size: 14px;
 }
 
+.daily {
+  margin: 4px 0 18px;
+}
+
 .pillDot {
   width: 6px;
   height: 6px;
