@@ -116,12 +116,13 @@ export function registerRoutes(app) {
     const athlete = await db.findUserById(req.params.id)
     if (!athlete || athlete.coachId !== req.user.id)
       return res.status(404).json({ error: 'not_found' })
-    const [profile, meals, checkins] = await Promise.all([
+    const [profile, meals, checkins, alcohol] = await Promise.all([
       db.getProfile(athlete.id),
       db.getMeals(athlete.id),
       db.getCheckins(athlete.id),
+      db.getAlcohol(athlete.id),
     ])
-    res.json({ athlete: db.publicUser(athlete), profile, meals, checkins })
+    res.json({ athlete: db.publicUser(athlete), profile, meals, checkins, alcohol })
   }))
 
   /* ---------------- Messaging ---------------- */

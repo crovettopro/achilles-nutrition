@@ -58,9 +58,19 @@ export default function CoachAthlete() {
         <Stat value={String(todays.length)} label="Comidas hoy" />
       </div>
 
-      <Button onClick={() => navigate(`/coach/chat/${athlete.id}`)} style={{ margin: '4px 0 22px' }}>
-        Enviar mensaje
-      </Button>
+      <div className={styles.detailActions}>
+        <Button block={false} className={styles.actionFlex} onClick={() => navigate(`/coach/chat/${athlete.id}`)}>
+          Enviar mensaje
+        </Button>
+        <Button
+          variant="ghost"
+          block={false}
+          className={styles.actionFlex}
+          onClick={() => navigate(`/coach/athlete/${athlete.id}/calendar`)}
+        >
+          Ver historial
+        </Button>
+      </div>
 
       <EvolutionCard evo={evo} goal={profile?.goal ?? 'fat'} />
 

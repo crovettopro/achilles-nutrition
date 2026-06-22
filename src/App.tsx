@@ -16,6 +16,8 @@ import Account from './screens/athlete/Account'
 import Messages from './screens/athlete/Messages'
 import CoachHome from './screens/coach/CoachHome'
 import CoachAthlete from './screens/coach/CoachAthlete'
+import CoachAthleteHistory from './screens/coach/CoachAthleteHistory'
+import CoachAthleteDay from './screens/coach/CoachAthleteDay'
 import CoachChat from './screens/coach/CoachChat'
 import styles from './App.module.css'
 
@@ -37,6 +39,8 @@ export default function App() {
         <Routes>
           <Route path="/coach" element={<CoachHome />} />
           <Route path="/coach/athlete/:id" element={<CoachAthlete />} />
+          <Route path="/coach/athlete/:id/calendar" element={<CoachAthleteHistory />} />
+          <Route path="/coach/athlete/:id/day/:date" element={<CoachAthleteDay />} />
           <Route path="/coach/chat/:id" element={<CoachChat />} />
           <Route path="*" element={<Navigate to="/coach" replace />} />
         </Routes>

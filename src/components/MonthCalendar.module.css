@@ -1,0 +1,105 @@
+.monthNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.chev {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--gold);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.chev:disabled {
+  color: var(--text-4);
+  opacity: 0.4;
+}
+
+.monthLabel {
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--text);
+}
+
+.summary {
+  text-align: center;
+  color: var(--text-2);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.weekDay {
+  text-align: center;
+  color: var(--text-3);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.blank {
+  aspect-ratio: 1;
+}
+
+.cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0;
+}
+
+.cell:disabled {
+  background: transparent;
+  border-color: transparent;
+  opacity: 0.35;
+}
+
+.cellToday {
+  border-color: var(--gold);
+}
+
+.cellNum {
+  color: var(--text-2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellScore {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.cellDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border-3);
+}
+
+.cellDotFuture {
+  background: transparent;
+}
