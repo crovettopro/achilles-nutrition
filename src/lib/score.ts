@@ -30,3 +30,16 @@ export function formatToday(date = new Date()): string {
   }).format(date)
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
+
+/** Long label for an ISO date, e.g. "Lunes, 16 de junio" (noon-anchored). */
+export function formatLongDate(iso: string): string {
+  return formatToday(new Date(iso + 'T12:00:00'))
+}
+
+/** Accent color for a score: gold (great), brass (ok), stone (weak). */
+export function scoreTone(score: number, hasData = true): string {
+  if (!hasData) return 'var(--text-3)'
+  if (score >= 85) return 'var(--gold)'
+  if (score >= 70) return '#c9b079'
+  return 'var(--text-2)'
+}

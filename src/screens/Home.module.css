@@ -115,6 +115,33 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 10px;
+}
+
+.weekDay:active {
+  background: var(--surface);
+}
+
+.weekFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.streak {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.calLink {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 12px;
 }
 
 .dot {
@@ -179,6 +206,9 @@
   font-family: var(--serif);
   font-size: 18px;
   color: var(--text);
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .mealsCount {
@@ -213,6 +243,8 @@
 }
 
 .mealCard {
+  width: 100%;
+  text-align: left;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-card);
@@ -220,6 +252,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.mealCard:active {
+  border-color: var(--gold-soft);
 }
 
 .mealInfo {

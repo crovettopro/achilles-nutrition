@@ -11,11 +11,23 @@ import {
 import type { Activity, AlcoholLog, Checkin, ChatMessage, Goal, Macros, Meal, Profile } from '../types'
 import { COACH_INTRO } from '../data/demo'
 import { api } from '../lib/api'
-import { todayISO } from '../lib/metrics'
+import { clampPast, mealScoreFromMacros, todayISO } from '../lib/metrics'
 
 let idSeq = 0
 const nextId = () =>
-  typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `id-${++idSeq}`
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `id-${Date.now().toString(36)}-${++idSeq}`
+
+/** Local wall-clock time as HH:MM (es-ES, 24h). */
+const nowTime = () =>
+  new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' }).format(new Date())
+
+/** Options for logging a meal to a specific (past) day. */
+export interface MealOpts {
+  date?: string
+  time?: string
+}
 
 interface AppContextValue {
   profile: Profile
@@ -30,7 +42,16 @@ interface AppContextValue {
   setActivity: (activity: Activity) => void
   stepProfile: (field: 'age' | 'weight' | 'height', delta: number) => void
   completeOnboarding: () => void
-  addMeal: (meal: { name: string; score: number; macros: Macros }) => void
+  /** Log a meal. Defaults to today; pass opts.date to log retroactively. Returns the created meal. */
+  addMeal: (meal: { name: string; score: number; macros: Macros }, opts?: MealOpts) => Meal
+  /** Patch a logged meal; if macros change the score is recomputed. */
+  updateMeal: (id: string, patch: Partial<Pick<Meal, 'name' | 'time' | 'macros'>>) => void
+  /** Delete a logged meal. */
+  removeMeal: (id: string) => void
+  /** Re-insert a previously removed meal verbatim (for undo). */
+  restoreMeal: (meal: Meal) => void
+  /** Clone a meal to another day (default today). Returns the clone. */
+  duplicateMeal: (id: string, toDate?: string) => Meal | null
   addCheckin: (checkin: Omit<Checkin, 'id' | 'date'>) => void
   addAlcohol: (log: Omit<AlcoholLog, 'id' | 'date'>) => void
   addChatMessage: (role: ChatMessage['role'], text: string) => ChatMessage
@@ -102,16 +123,88 @@ export function AppProvider({ children }: { children: ReactNode }) {
     saveProfile(updated)
   }, [saveProfile])
 
-  const addMeal = useCallback((meal: { name: string; score: number; macros: Macros }) => {
-    const time = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' }).format(
-      new Date(),
+  // Serialize whole-array PUTs so rapid back-fill / edit / delete can't race
+  // and clobber each other (last-write-wins on the server).
+  const mealsWrite = useRef<Promise<unknown>>(Promise.resolve())
+  const persistMeals = useCallback((next: Meal[]) => {
+    mealsWrite.current = mealsWrite.current.then(() =>
+      api('/me/meals', { method: 'PUT', body: { meals: next } }).catch(() => {}),
     )
-    setMeals((prev) => {
-      const next = [{ ...meal, id: nextId(), date: todayISO(), time }, ...prev]
-      void api('/me/meals', { method: 'PUT', body: { meals: next } }).catch(() => {})
-      return next
-    })
   }, [])
+
+  const addMeal = useCallback(
+    (meal: { name: string; score: number; macros: Macros }, opts?: MealOpts): Meal => {
+      const date = clampPast(opts?.date ?? todayISO())
+      const time = opts?.time ?? (date === todayISO() ? nowTime() : '—')
+      const created: Meal = { ...meal, id: nextId(), date, time }
+      setMeals((prev) => {
+        const next = [created, ...prev]
+        persistMeals(next)
+        return next
+      })
+      return created
+    },
+    [persistMeals],
+  )
+
+  const updateMeal = useCallback(
+    (id: string, patch: Partial<Pick<Meal, 'name' | 'time' | 'macros'>>) => {
+      setMeals((prev) => {
+        const next = prev.map((m) =>
+          m.id === id
+            ? {
+                ...m,
+                ...patch,
+                ...(patch.macros ? { macros: patch.macros, score: mealScoreFromMacros(patch.macros) } : {}),
+              }
+            : m,
+        )
+        persistMeals(next)
+        return next
+      })
+    },
+    [persistMeals],
+  )
+
+  const removeMeal = useCallback(
+    (id: string) => {
+      setMeals((prev) => {
+        const next = prev.filter((m) => m.id !== id)
+        persistMeals(next)
+        return next
+      })
+    },
+    [persistMeals],
+  )
+
+  const restoreMeal = useCallback(
+    (meal: Meal) => {
+      setMeals((prev) => {
+        if (prev.some((m) => m.id === meal.id)) return prev
+        const next = [meal, ...prev]
+        persistMeals(next)
+        return next
+      })
+    },
+    [persistMeals],
+  )
+
+  const duplicateMeal = useCallback(
+    (id: string, toDate?: string): Meal | null => {
+      let clone: Meal | null = null
+      setMeals((prev) => {
+        const src = prev.find((m) => m.id === id)
+        if (!src) return prev
+        const date = clampPast(toDate ?? todayISO())
+        clone = { ...src, id: nextId(), date, time: date === todayISO() ? nowTime() : src.time }
+        const next = [clone, ...prev]
+        persistMeals(next)
+        return next
+      })
+      return clone
+    },
+    [persistMeals],
+  )
 
   const addCheckin = useCallback((checkin: Omit<Checkin, 'id' | 'date'>) => {
     setCheckins((prev) => {
@@ -155,6 +248,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       stepProfile,
       completeOnboarding,
       addMeal,
+      updateMeal,
+      removeMeal,
+      restoreMeal,
+      duplicateMeal,
       addCheckin,
       addAlcohol,
       addChatMessage,
@@ -173,6 +270,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       stepProfile,
       completeOnboarding,
       addMeal,
+      updateMeal,
+      removeMeal,
+      restoreMeal,
+      duplicateMeal,
       addCheckin,
       addAlcohol,
       addChatMessage,

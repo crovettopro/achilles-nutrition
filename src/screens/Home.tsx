@@ -6,11 +6,13 @@ import DailyTargets from '../components/DailyTargets'
 import { formatToday, goalLabel, statusText } from '../lib/score'
 import {
   adjustedCalorieTarget,
+  byTime,
   dailyScore,
   dailyTotals,
   dayStatus,
   mealsOn,
   proteinTarget,
+  streak,
   todayISO,
   weeklyAdherence,
   weeklyLog,
@@ -27,9 +29,10 @@ export default function Home() {
   const initial = user?.name?.trim()?.charAt(0).toUpperCase() || 'A'
 
   const breakdown = dailyScore(meals, profile)
-  const todaysMeals = mealsOn(meals, todayISO())
+  const todaysMeals = [...mealsOn(meals, todayISO())].sort(byTime)
   const adherence = weeklyAdherence(meals)
   const week = weeklyLog(meals)
+  const days = streak(meals)
 
   const totals = dailyTotals(meals)
   const adj = adjustedCalorieTarget(profile, alcohol)
@@ -71,21 +74,31 @@ export default function Home() {
         penalty={adj.penalty}
       />
 
-      {/* Weekly adherence */}
+      {/* Weekly adherence — tap a day to review or back-fill it */}
       <section className={styles.week}>
         <div className={styles.weekTop}>
           <span className={styles.weekLabel}>Adherencia semanal</span>
           <span className={styles.weekPct}>{adherence}%</span>
         </div>
         <div className={styles.weekDots}>
-          {week.map((d, i) => (
-            <div key={d.date} className={styles.weekDay}>
+          {week.map((d) => (
+            <button key={d.date} className={styles.weekDay} onClick={() => navigate(`/day/${d.date}`)}>
               <span
-                className={`${styles.dot} ${d.logged ? styles.dotOn : ''} ${i === week.length - 1 ? styles.dotToday : ''}`}
+                className={`${styles.dot} ${d.logged ? styles.dotOn : ''} ${d.date === todayISO() ? styles.dotToday : ''}`}
               />
               <span className={styles.dow}>{dowLetter(d.date)}</span>
-            </div>
+            </button>
           ))}
+        </div>
+        <div className={styles.weekFoot}>
+          {days > 0 ? (
+            <span className={styles.streak}>🔥 Racha de {days} {days === 1 ? 'día' : 'días'}</span>
+          ) : (
+            <span className={styles.streak} />
+          )}
+          <button className={styles.calLink} onClick={() => navigate('/calendar')}>
+            Ver calendario →
+          </button>
         </div>
       </section>
 
@@ -103,7 +116,9 @@ export default function Home() {
 
       {/* Today's meals */}
       <section className={styles.mealsHeader}>
-        <span className={styles.mealsTitle}>Hoy</span>
+        <button className={styles.mealsTitle} onClick={() => navigate(`/day/${todayISO()}`)}>
+          Hoy
+        </button>
         <span className={styles.mealsCount}>
           {todaysMeals.length} {todaysMeals.length === 1 ? 'comida' : 'comidas'}
         </span>
@@ -117,7 +132,7 @@ export default function Home() {
       ) : (
         <section className={styles.mealsList}>
           {todaysMeals.map((meal) => (
-            <div key={meal.id} className={styles.mealCard}>
+            <button key={meal.id} className={styles.mealCard} onClick={() => navigate(`/day/${todayISO()}`)}>
               <div className={styles.mealInfo}>
                 <div className={styles.mealName}>{meal.name}</div>
                 <div className={styles.mealTime}>{meal.time}</div>
@@ -128,7 +143,7 @@ export default function Home() {
               >
                 {meal.score}
               </div>
-            </div>
+            </button>
           ))}
         </section>
       )}

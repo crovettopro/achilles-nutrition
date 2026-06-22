@@ -168,6 +168,53 @@ export function previousISO(date = todayISO()): string {
   return todayISO(d)
 }
 
+/** The day after `date` (YYYY-MM-DD). Noon-anchored (DST-safe). */
+export function nextISO(date = todayISO()): string {
+  const d = new Date(date + 'T12:00:00')
+  d.setDate(d.getDate() + 1)
+  return todayISO(d)
+}
+
+/** `date` shifted by `delta` calendar days. Noon-anchored. */
+export function shiftISO(date: string, delta: number): string {
+  const d = new Date(date + 'T12:00:00')
+  d.setDate(d.getDate() + delta)
+  return todayISO(d)
+}
+
+/** True only for a real, well-formed calendar date 'YYYY-MM-DD'. */
+export function isValidISO(s: string | undefined | null): s is string {
+  if (!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false
+  const d = new Date(s + 'T12:00:00')
+  return !Number.isNaN(d.getTime()) && todayISO(d) === s
+}
+
+/** Never allow a date in the future — clamps to today. */
+export function clampPast(date: string, today = todayISO()): string {
+  return date > today ? today : date
+}
+
+export const isFuture = (date: string, today = todayISO()) => date > today
+export const isToday = (date: string, today = todayISO()) => date === today
+
+/** Consecutive days (ending today) with ≥1 meal. Today may still be empty. */
+export function streak(meals: Meal[], from = todayISO()): number {
+  let d = from
+  if (mealsOn(meals, d).length === 0) d = previousISO(d)
+  let n = 0
+  while (mealsOn(meals, d).length > 0) {
+    n++
+    d = previousISO(d)
+  }
+  return n
+}
+
+/** Chronological order within a day; meals without a HH:MM time sort last. */
+export function byTime(a: Meal, b: Meal): number {
+  const t = (m: Meal) => (/^\d{2}:\d{2}$/.test(m.time) ? m.time : '99:99')
+  return t(a).localeCompare(t(b))
+}
+
 /** Total alcohol calories logged on a given date. */
 export function alcoholKcalOn(logs: AlcoholLog[], date: string): number {
   return (logs ?? []).filter((l) => l.date === date).reduce((s, l) => s + (l.kcal || 0), 0)

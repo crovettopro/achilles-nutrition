@@ -1,0 +1,221 @@
+.screen {
+  padding: 8px 24px 40px;
+}
+
+/* ---------- Date navigator ---------- */
+.dateNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 6px 0 18px;
+}
+
+.chev {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--gold);
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.chev:disabled {
+  color: var(--text-4);
+  opacity: 0.4;
+}
+
+.dateTitle {
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--text);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.todayTag {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-pill);
+  border-radius: 100px;
+  padding: 3px 8px;
+}
+
+/* ---------- Score ---------- */
+.scoreSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 4px 0 22px;
+}
+
+.pill {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--gold-pill);
+  border-radius: var(--r-pill);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.alcoholNote {
+  color: #e0a86b;
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 14px 2px 0;
+}
+
+/* ---------- Meals ---------- */
+.mealsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 26px 0 14px;
+}
+
+.mealsTitle {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text);
+}
+
+.mealsCount {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--border-3);
+  border-radius: var(--r-card);
+  padding: 22px 18px;
+  text-align: center;
+}
+
+.emptyTitle {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.emptySub {
+  color: var(--gold);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.mealsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mealCard {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mealCard:active {
+  border-color: var(--gold-soft);
+}
+
+.mealInfo {
+  flex: 1;
+  min-width: 0;
+  padding-right: 14px;
+}
+
+.mealName {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.mealTime {
+  color: var(--text-2);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.mealScore {
+  font-family: var(--serif);
+  font-size: 22px;
+}
+
+/* ---------- Add ---------- */
+.addRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.addBtn {
+  width: 100%;
+  background: var(--surface-gradient);
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--r-btn);
+  padding: 16px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.scanLink {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-size: 13px;
+}
+
+/* ---------- Undo toast ---------- */
+.undo {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav-h) + 16px);
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: calc(var(--app-max) - 48px);
+  background: #1a1a1a;
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 70;
+  animation: achFade 0.25s ease both;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.undo button {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+}

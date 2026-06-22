@@ -1,15 +1,18 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { ai } from '../services/ai'
+import { formatLongDate } from '../lib/score'
 import {
   adjustedCalorieTarget,
   assessMeal,
   dailyTotals,
   dayStatus,
+  isValidISO,
   mealScoreFromMacros,
   mealVerdict,
   proteinTarget,
+  todayISO,
 } from '../lib/metrics'
 import CameraStage from '../components/CameraStage'
 import DailyTargets from '../components/DailyTargets'
@@ -22,6 +25,9 @@ type State = 'camera' | 'analyzing' | 'result'
 
 export default function Scan() {
   const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const dateParam = params.get('date')
+  const targetDate = isValidISO(dateParam) && dateParam <= todayISO() ? dateParam : null
   const { addMeal, meals, alcohol, profile } = useApp()
   const [state, setState] = useState<State>('camera')
   const [description, setDescription] = useState('')
@@ -29,6 +35,15 @@ export default function Scan() {
   const [result, setResult] = useState<FoodAnalysis | null>(null)
   const [error, setError] = useState('')
   const [adding, setAdding] = useState(false)
+
+  const reset = () => {
+    setDescription('')
+    setPhoto(null)
+    setResult(null)
+    setError('')
+    setAdding(false)
+    setState('camera')
+  }
 
   const analyze = async (input: { image?: string; text?: string }) => {
     setPhoto(input.image ?? null)
@@ -68,9 +83,12 @@ export default function Scan() {
 
   const register = () => {
     if (result) {
-      addMeal({ name: result.name, score: result.score, macros: result.macros })
+      addMeal(
+        { name: result.name, score: result.score, macros: result.macros },
+        targetDate ? { date: targetDate } : undefined,
+      )
     }
-    navigate('/home')
+    navigate(targetDate ? `/day/${targetDate}` : '/home')
   }
 
   if (state === 'analyzing') {
@@ -82,10 +100,11 @@ export default function Scan() {
   }
 
   if (state === 'result' && result) {
+    const day = targetDate ?? todayISO()
     const assessment = assessMeal(result.macros)
-    const kcalTarget = adjustedCalorieTarget(profile, alcohol).target
+    const kcalTarget = adjustedCalorieTarget(profile, alcohol, day).target
     const pTarget = proteinTarget(profile)
-    const after = dailyTotals(meals)
+    const after = dailyTotals(meals, day)
     const totalsAfter = {
       ...after,
       protein: after.protein + Math.round(result.macros.protein),
@@ -97,6 +116,9 @@ export default function Scan() {
 
     return (
       <div className={`${styles.screen} ach-fade`}>
+        {targetDate && (
+          <div className={styles.retroBanner}>Registrando para el {formatLongDate(targetDate).toLowerCase()}</div>
+        )}
         <div
           className={styles.resultPhoto}
           style={photo ? { backgroundImage: `url(${photo})` } : undefined}
@@ -158,7 +180,7 @@ export default function Scan() {
 
         {/* Daily accumulation vs targets */}
         <DailyTargets
-          heading="Resumen del día · con esta comida"
+          heading={targetDate ? `${formatLongDate(day).split(',')[0]} · con esta comida` : 'Resumen del día · con esta comida'}
           protein={totalsAfter.protein}
           proteinTarget={pTarget}
           kcal={totalsAfter.kcal}
@@ -169,7 +191,7 @@ export default function Scan() {
         <p className={styles.verdict}>{verdict}</p>
 
         <div className={styles.resultActions}>
-          <Button variant="ghost" block={false} className={styles.flex} onClick={() => setState('camera')}>
+          <Button variant="ghost" block={false} className={styles.flex} onClick={reset}>
             Otra foto
           </Button>
           <Button block={false} className={styles.flex} onClick={register}>
@@ -186,6 +208,9 @@ export default function Scan() {
       <h2 className={styles.title}>Escanear comida</h2>
       <p className={styles.subtitle}>Una foto. La IA hace el resto.</p>
 
+      {targetDate && (
+        <div className={styles.retroBanner}>Registrando para el {formatLongDate(targetDate).toLowerCase()}</div>
+      )}
       {error && <p className={styles.errorBanner}>{error}</p>}
 
       <CameraStage

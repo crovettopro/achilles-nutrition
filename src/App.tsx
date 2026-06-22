@@ -5,6 +5,8 @@ import AppShell from './components/AppShell'
 import Login from './screens/auth/Login'
 import Onboarding from './screens/Onboarding/Onboarding'
 import Home from './screens/Home'
+import Day from './screens/Day'
+import CalendarScreen from './screens/Calendar'
 import Scan from './screens/Scan'
 import Restaurant from './screens/Restaurant'
 import Weekend from './screens/Weekend'
@@ -54,6 +56,8 @@ function AthleteRoutes() {
       <Route path="/messages" element={<Messages />} />
       <Route element={<AppShell />}>
         <Route path="/home" element={<Home />} />
+        <Route path="/day/:date" element={<Day />} />
+        <Route path="/calendar" element={<CalendarScreen />} />
         <Route path="/scan" element={<Scan />} />
         <Route path="/restaurant" element={<Restaurant />} />
         <Route path="/weekend" element={<Weekend />} />
