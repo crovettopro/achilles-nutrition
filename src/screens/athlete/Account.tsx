@@ -62,7 +62,7 @@ export default function Account() {
           </p>
           <input
             className={styles.input}
-            placeholder="Código (p. ej. ACH-1234)"
+            placeholder="Código (p. ej. AQ-1234)"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             aria-label="Código de preparador"

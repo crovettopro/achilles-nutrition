@@ -11,7 +11,7 @@ import { supabase, hasSupabase } from './supabase.js'
  */
 
 function shortCode() {
-  return 'ACH-' + randomUUID().slice(0, 4).toUpperCase()
+  return 'AQ-' + randomUUID().slice(0, 4).toUpperCase()
 }
 
 /** DB row (snake_case) → app user shape (camelCase) used across the server. */
@@ -34,7 +34,7 @@ const DEMO_COACH = {
   id: 'coach-alejandro',
   email: 'alejandrodiosfdz@gmail.com',
   name: 'Alejandro',
-  coachCode: 'ACH-ALEX',
+  coachCode: 'AQ-ALEX',
 }
 const DEMO_ATHLETE = {
   id: 'athlete-crovetto',
@@ -117,7 +117,7 @@ async function ensureDemoUsers() {
     })
     await supabase.from('checkins').upsert({
       user_id: DEMO_ATHLETE.id,
-      items: [{ id: randomUUID(), date: today, weightKg: 81.4, waistCm: 84, steps: 11400 }],
+      items: [{ id: randomUUID(), date: today, weightKg: 81.4, waistCm: 84 }],
     })
   }
 

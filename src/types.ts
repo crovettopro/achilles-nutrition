@@ -71,8 +71,6 @@ export interface Checkin {
   date: string
   weightKg: number
   waistCm: number
-  /** Steps logged for the week (manual entry). */
-  steps: number
   /** Optional progress photo as a data URL. */
   photo?: string
 }

@@ -8,9 +8,9 @@ import styles from './Onboarding.module.css'
 type Step = 0 | 1 | 2 | 3
 
 const ACTIVITIES: { key: Activity; title: string; sub: string }[] = [
-  { key: 'low', title: 'Poco activo', sub: 'Menos de 7.000 pasos diarios' },
-  { key: 'mid', title: 'Activo', sub: 'Entre 8.000 y 10.000 pasos diarios' },
-  { key: 'high', title: 'Muy activo', sub: 'Entre 10.000 y 15.000 pasos diarios' },
+  { key: 'low', title: 'Poco activo', sub: 'Trabajo sentado y poco ejercicio' },
+  { key: 'mid', title: 'Activo', sub: 'Entrenas 2 a 4 veces por semana' },
+  { key: 'high', title: 'Muy activo', sub: 'Entrenas casi a diario o trabajo físico' },
 ]
 
 export default function Onboarding() {
@@ -59,7 +59,7 @@ export default function Onboarding() {
 function Welcome({ onStart }: { onStart: () => void }) {
   return (
     <div className={`${styles.welcome} ach-fade`}>
-      <div className={styles.monogram}>ATC</div>
+      <div className={styles.monogram}>AQ</div>
       <h1 className={styles.wordmark}>AQUILES</h1>
       <div className={styles.divider} />
       <p className={styles.tagline}>

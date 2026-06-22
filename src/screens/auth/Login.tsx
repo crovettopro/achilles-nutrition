@@ -53,7 +53,7 @@ export default function Login() {
     <div className={styles.screen}>
       <div className={`${styles.inner} ach-fade`}>
         <div className={styles.brand}>
-          <div className={styles.monogram}>ATC</div>
+          <div className={styles.monogram}>AQ</div>
           <h1 className={styles.wordmark}>AQUILES</h1>
         </div>
 

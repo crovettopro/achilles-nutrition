@@ -246,6 +246,19 @@ export function dailyScore(meals: Meal[], profile: Profile, date = todayISO()): 
   }
 }
 
+/** Last 7 days (oldest → newest), each flagged if ≥1 meal was logged. */
+export function weeklyLog(meals: Meal[], date = todayISO()): { date: string; logged: boolean }[] {
+  const base = new Date(date + 'T12:00:00')
+  const out: { date: string; logged: boolean }[] = []
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(base)
+    d.setDate(base.getDate() - i)
+    const iso = todayISO(d)
+    out.push({ date: iso, logged: mealsOn(meals, iso).length > 0 })
+  }
+  return out
+}
+
 /** % of the last 7 days (incl. today) with at least one meal logged. */
 export function weeklyAdherence(meals: Meal[], date = todayISO()): number {
   // Work in local time and format each day with the same local helper as todayISO.

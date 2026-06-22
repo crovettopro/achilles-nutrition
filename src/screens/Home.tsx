@@ -13,25 +13,23 @@ import {
   proteinTarget,
   todayISO,
   weeklyAdherence,
+  weeklyLog,
 } from '../lib/metrics'
 import styles from './Home.module.css'
 
-function formatSteps(steps?: number): string {
-  if (!steps) return '—'
-  return steps >= 1000 ? `${(steps / 1000).toFixed(1)}k` : String(steps)
-}
+const DOW = ['D', 'L', 'M', 'X', 'J', 'V', 'S'] // getDay(): 0=Sun … 6=Sat
+const dowLetter = (iso: string) => DOW[new Date(iso + 'T12:00:00').getDay()]
 
 export default function Home() {
   const navigate = useNavigate()
-  const { profile, meals, checkins, alcohol } = useApp()
+  const { profile, meals, alcohol } = useApp()
   const { user } = useAuth()
   const initial = user?.name?.trim()?.charAt(0).toUpperCase() || 'A'
 
   const breakdown = dailyScore(meals, profile)
   const todaysMeals = mealsOn(meals, todayISO())
   const adherence = weeklyAdherence(meals)
-  const proteinMet = breakdown.proteinGrams >= breakdown.proteinTarget && breakdown.hasData
-  const latestSteps = checkins[0]?.steps
+  const week = weeklyLog(meals)
 
   const totals = dailyTotals(meals)
   const adj = adjustedCalorieTarget(profile, alcohol)
@@ -55,34 +53,40 @@ export default function Home() {
         <ScoreRing score={breakdown.score} hasData={breakdown.hasData} />
         <div className={styles.pill}>
           <span className={styles.pillDot} />
-          <span>
-            {breakdown.hasData ? statusText(breakdown.score) : 'Escanea tu primera comida'}
-          </span>
+          <span>{breakdown.hasData ? statusText(breakdown.score) : 'Escanea tu primera comida'}</span>
+        </div>
+        <div className={styles.goal}>
+          Objetivo · <span>{goalLabel(profile.goal)}</span>
         </div>
       </section>
 
-      <div className={styles.goal}>
-        Objetivo · <span>{goalLabel(profile.goal)}</span>
-      </div>
-
       {/* Daily targets */}
-      <div className={styles.daily}>
-        <DailyTargets
-          heading="Hoy vs tu objetivo"
-          protein={totals.protein}
-          proteinTarget={proteinTarget(profile)}
-          kcal={totals.kcal}
-          kcalTarget={adj.target}
-          status={dStatus}
-          penalty={adj.penalty}
-        />
-      </div>
+      <DailyTargets
+        heading="Hoy vs tu objetivo"
+        protein={totals.protein}
+        proteinTarget={proteinTarget(profile)}
+        kcal={totals.kcal}
+        kcalTarget={adj.target}
+        status={dStatus}
+        penalty={adj.penalty}
+      />
 
-      {/* Metrics */}
-      <section className={styles.metrics}>
-        <Metric value={`${adherence}%`} label="Adherencia" />
-        <Metric value="✓" label="Proteína" gold={proteinMet} muted={!proteinMet} />
-        <Metric value={formatSteps(latestSteps)} label="Pasos" />
+      {/* Weekly adherence */}
+      <section className={styles.week}>
+        <div className={styles.weekTop}>
+          <span className={styles.weekLabel}>Adherencia semanal</span>
+          <span className={styles.weekPct}>{adherence}%</span>
+        </div>
+        <div className={styles.weekDots}>
+          {week.map((d, i) => (
+            <div key={d.date} className={styles.weekDay}>
+              <span
+                className={`${styles.dot} ${d.logged ? styles.dotOn : ''} ${i === week.length - 1 ? styles.dotToday : ''}`}
+              />
+              <span className={styles.dow}>{dowLetter(d.date)}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Quick actions */}
@@ -128,28 +132,6 @@ export default function Home() {
           ))}
         </section>
       )}
-    </div>
-  )
-}
-
-function Metric({
-  value,
-  label,
-  gold,
-  muted,
-}: {
-  value: string
-  label: string
-  gold?: boolean
-  muted?: boolean
-}) {
-  const color = gold ? 'var(--gold)' : muted ? 'var(--text-3)' : undefined
-  return (
-    <div className={styles.metric}>
-      <div className={styles.metricValue} style={color ? { color } : undefined}>
-        {value}
-      </div>
-      <div className={styles.metricLabel}>{label}</div>
     </div>
   )
 }

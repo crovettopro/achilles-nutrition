@@ -72,7 +72,6 @@ export default function CoachAthlete() {
           <>
             <Row label="Peso" value={`${trend.latest.weightKg} kg`} delta={trend.weightDelta} unit="kg" />
             <Row label="Cintura" value={`${trend.latest.waistCm} cm`} delta={trend.waistDelta} unit="cm" />
-            <Row label="Pasos" value={`${(trend.latest.steps / 1000).toFixed(1)}k`} />
           </>
         ) : (
           <div className={styles.muted}>Sin check-ins todavía.</div>
