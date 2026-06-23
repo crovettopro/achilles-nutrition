@@ -115,7 +115,11 @@ export default function MealEditSheet({
 
         <div className={styles.estimateRow}>
           <button className={styles.estimate} onClick={estimate} disabled={!name.trim() || estimating}>
-            {estimating ? 'Estimando…' : '✨ Estimar con IA'}
+            {estimating
+              ? 'Estimando…'
+              : valid
+                ? '✨ Recalcular con IA'
+                : '✨ Estimar con IA'}
           </button>
         </div>
 
