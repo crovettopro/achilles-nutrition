@@ -13,6 +13,15 @@
   transform: scale(0.99);
 }
 
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn:disabled:active {
+  transform: none;
+}
+
 .block {
   width: 100%;
 }

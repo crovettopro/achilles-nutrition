@@ -108,7 +108,11 @@ export default function MealEditSheet({
           />
         </label>
 
-        {n(kcal) === 0 && <div className={styles.hint}>Si dejas las kcal vacías, las calculamos con los macros.</div>}
+        {!valid && name.trim().length > 0 ? (
+          <div className={styles.hint}>Añade kcal o al menos un macro para poder guardar.</div>
+        ) : (
+          n(kcal) === 0 && <div className={styles.hint}>Si dejas las kcal vacías, las calculamos con los macros.</div>
+        )}
 
         <div className={styles.actions}>
           <Button variant="ghost" block={false} className={styles.flex} onClick={onClose}>
