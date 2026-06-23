@@ -63,6 +63,35 @@
   border-color: var(--gold-soft);
 }
 
+.estimateRow {
+  display: flex;
+  justify-content: flex-end;
+  margin: -2px 0 12px;
+}
+
+.estimate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-soft);
+  border-radius: 100px;
+  color: var(--gold);
+  font-size: 13px;
+  padding: 8px 14px;
+}
+
+.estimate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.estError {
+  color: #d9836b;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

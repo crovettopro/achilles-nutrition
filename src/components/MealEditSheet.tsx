@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
+import { ai } from '../services/ai'
 import { mealScoreFromMacros, todayISO } from '../lib/metrics'
 import Button from './ui/Button'
 import type { Macros, Meal } from '../types'
@@ -35,8 +36,30 @@ export default function MealEditSheet({
   const [fat, setFat] = useState(meal ? String(meal.macros.fat) : '')
   const [time, setTime] = useState(/^\d{2}:\d{2}$/.test(meal?.time ?? '') ? (meal!.time as string) : '')
   const [confirmDel, setConfirmDel] = useState(false)
+  const [estimating, setEstimating] = useState(false)
+  const [estError, setEstError] = useState<string | null>(null)
 
   const n = (s: string) => Math.max(0, parseFloat(s.replace(',', '.')) || 0)
+
+  // Ask the AI to estimate macros from the dish name, so the user doesn't need
+  // to know or remember them. Fills the four fields (and the name if empty).
+  const estimate = async () => {
+    if (!name.trim() || estimating) return
+    setEstimating(true)
+    setEstError(null)
+    try {
+      const r = await ai.analyzeFood({ text: name.trim() })
+      setKcal(String(r.macros.kcal))
+      setProtein(String(r.macros.protein))
+      setCarbs(String(r.macros.carbs))
+      setFat(String(r.macros.fat))
+      if (!name.trim() && r.name) setName(r.name)
+    } catch {
+      setEstError('No se pudo estimar. Inténtalo de nuevo o escribe los macros.')
+    } finally {
+      setEstimating(false)
+    }
+  }
 
   const macros = (): Macros => {
     const p = n(protein)
@@ -90,12 +113,20 @@ export default function MealEditSheet({
           aria-label="Nombre"
         />
 
+        <div className={styles.estimateRow}>
+          <button className={styles.estimate} onClick={estimate} disabled={!name.trim() || estimating}>
+            {estimating ? 'Estimando…' : '✨ Estimar con IA'}
+          </button>
+        </div>
+
         <div className={styles.grid}>
           <Mini label="kcal" value={kcal} onChange={setKcal} />
           <Mini label="Prot." value={protein} onChange={setProtein} />
           <Mini label="Carb." value={carbs} onChange={setCarbs} />
           <Mini label="Grasa" value={fat} onChange={setFat} />
         </div>
+
+        {estError && <p className={styles.estError}>{estError}</p>}
 
         <label className={styles.timeRow}>
           <span className={styles.timeLabel}>Hora (opcional)</span>
@@ -109,7 +140,7 @@ export default function MealEditSheet({
         </label>
 
         {!valid && name.trim().length > 0 ? (
-          <div className={styles.hint}>Añade kcal o al menos un macro para poder guardar.</div>
+          <div className={styles.hint}>Pulsa «Estimar con IA» o añade kcal / algún macro para guardar.</div>
         ) : (
           n(kcal) === 0 && <div className={styles.hint}>Si dejas las kcal vacías, las calculamos con los macros.</div>
         )}
